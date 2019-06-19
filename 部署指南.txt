@@ -1,0 +1,25 @@
+yum install -y git gcc gcc-c++ mysql-devel unzip zip
+chmod +x ./server/src/make_protobuf.sh
+chmod +x ./server/src/make_hiredis.sh
+chmod +x ./server/src/make_mariadb.sh
+chmod +x ./server/src/make_log4cxx.sh
+chmod +x ./server/src/build.sh
+cd ./server/src
+./make_protobuf.sh
+./make_hiredis.sh
+./make_mariadb.sh
+./make_log4cxx.sh
+./build.sh version 1
+cp ../im-server-1.tar.gz ../../auto_setup/im_server/
+cd ../../
+mv php tt
+zip -q -r tt.zip tt
+cp tt.zip ./auto_setup/im_web/
+cd auto_setup
+chmod +x setup.sh
+./setup.sh install
+#重新分配图片传输文件夹（bug）
+cd ./im_server/im-server-1/msfs/
+mkdir files
+vim msfs.conf #修改BaseDir=./files
+../daeml msfs
