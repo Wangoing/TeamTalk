@@ -107,11 +107,13 @@ enum BuddyListCmdID {
   CID_BUDDY_LIST_AVATAR_CHANGED_NOTIFY = 530,
   CID_BUDDY_LIST_CHANGE_SIGN_INFO_REQUEST = 531,
   CID_BUDDY_LIST_CHANGE_SIGN_INFO_RESPONSE = 532,
-  CID_BUDDY_LIST_SIGN_INFO_CHANGED_NOTIFY = 533
+  CID_BUDDY_LIST_SIGN_INFO_CHANGED_NOTIFY = 533,
+  CID_BUDDY_CONTACT_SESSION_TOP = 534,
+  CID_BUDDY_CONTACT_SESSION_TOP_ACK = 535
 };
 bool BuddyListCmdID_IsValid(int value);
 const BuddyListCmdID BuddyListCmdID_MIN = CID_BUDDY_LIST_RECENT_CONTACT_SESSION_REQUEST;
-const BuddyListCmdID BuddyListCmdID_MAX = CID_BUDDY_LIST_SIGN_INFO_CHANGED_NOTIFY;
+const BuddyListCmdID BuddyListCmdID_MAX = CID_BUDDY_CONTACT_SESSION_TOP_ACK;
 const int BuddyListCmdID_ARRAYSIZE = BuddyListCmdID_MAX + 1;
 
 enum MessageCmdID {
@@ -128,11 +130,16 @@ enum MessageCmdID {
   CID_MSG_GET_LATEST_MSG_ID_REQ = 779,
   CID_MSG_GET_LATEST_MSG_ID_RSP = 780,
   CID_MSG_GET_BY_MSG_ID_REQ = 781,
-  CID_MSG_GET_BY_MSG_ID_RES = 782
+  CID_MSG_GET_BY_MSG_ID_RES = 782,
+  CID_MSG_DELETE = 783,
+  CID_MSG_DELETE_NOTIFY = 784,
+  CID_MSG_CANCEL = 785,
+  CID_MSG_CANCEL_NOTIFY = 786,
+  CID_GROUP_MSG_READ_RESPONSE = 787
 };
 bool MessageCmdID_IsValid(int value);
 const MessageCmdID MessageCmdID_MIN = CID_MSG_DATA;
-const MessageCmdID MessageCmdID_MAX = CID_MSG_GET_BY_MSG_ID_RES;
+const MessageCmdID MessageCmdID_MAX = CID_GROUP_MSG_READ_RESPONSE;
 const int MessageCmdID_ARRAYSIZE = MessageCmdID_MAX + 1;
 
 enum GroupCmdID {
@@ -146,11 +153,13 @@ enum GroupCmdID {
   CID_GROUP_CHANGE_MEMBER_RESPONSE = 1032,
   CID_GROUP_SHIELD_GROUP_REQUEST = 1033,
   CID_GROUP_SHIELD_GROUP_RESPONSE = 1034,
-  CID_GROUP_CHANGE_MEMBER_NOTIFY = 1035
+  CID_GROUP_CHANGE_MEMBER_NOTIFY = 1035,
+  CID_GROUP_CHANGE_REQUEST = 1036,
+  CID_GROUP_CHANGE_RESPONSE = 1037
 };
 bool GroupCmdID_IsValid(int value);
 const GroupCmdID GroupCmdID_MIN = CID_GROUP_NORMAL_LIST_REQUEST;
-const GroupCmdID GroupCmdID_MAX = CID_GROUP_CHANGE_MEMBER_NOTIFY;
+const GroupCmdID GroupCmdID_MAX = CID_GROUP_CHANGE_RESPONSE;
 const int GroupCmdID_ARRAYSIZE = GroupCmdID_MAX + 1;
 
 enum FileCmdID {
@@ -208,6 +217,17 @@ const OtherCmdID OtherCmdID_MIN = CID_OTHER_HEARTBEAT;
 const OtherCmdID OtherCmdID_MAX = CID_OTHER_FILE_SERVER_IP_RSP;
 const int OtherCmdID_ARRAYSIZE = OtherCmdID_MAX + 1;
 
+enum CollectCmdID {
+  CID_COLLECT_DATA = 2049,
+  CID_COLLECT_DATA_ACK = 2050,
+  CID_COLLECT_LIST_REQUEST = 2051,
+  CID_COLLECT_LIST_RESPONSE = 2052
+};
+bool CollectCmdID_IsValid(int value);
+const CollectCmdID CollectCmdID_MIN = CID_COLLECT_DATA;
+const CollectCmdID CollectCmdID_MAX = CID_COLLECT_LIST_RESPONSE;
+const int CollectCmdID_ARRAYSIZE = CollectCmdID_MAX + 1;
+
 enum ResultType {
   REFUSE_REASON_NONE = 0,
   REFUSE_REASON_NO_MSG_SERVER = 1,
@@ -263,11 +283,12 @@ enum MsgType {
   MSG_TYPE_SINGLE_TEXT = 1,
   MSG_TYPE_SINGLE_AUDIO = 2,
   MSG_TYPE_GROUP_TEXT = 17,
-  MSG_TYPE_GROUP_AUDIO = 18
+  MSG_TYPE_GROUP_AUDIO = 18,
+  MSG_TYPE_GROUP_MEM_ADD = 33
 };
 bool MsgType_IsValid(int value);
 const MsgType MsgType_MIN = MSG_TYPE_SINGLE_TEXT;
-const MsgType MsgType_MAX = MSG_TYPE_GROUP_AUDIO;
+const MsgType MsgType_MAX = MSG_TYPE_GROUP_MEM_ADD;
 const int MsgType_ARRAYSIZE = MsgType_MAX + 1;
 
 enum ClientType {
@@ -289,6 +310,34 @@ bool GroupType_IsValid(int value);
 const GroupType GroupType_MIN = GROUP_TYPE_NORMAL;
 const GroupType GroupType_MAX = GROUP_TYPE_TMP;
 const int GroupType_ARRAYSIZE = GroupType_MAX + 1;
+
+enum GroupJoinType {
+  GROUP_JOIN_BY_ALL = 0,
+  GROUP_JOIN_BY_ADMIN = 1
+};
+bool GroupJoinType_IsValid(int value);
+const GroupJoinType GroupJoinType_MIN = GROUP_JOIN_BY_ALL;
+const GroupJoinType GroupJoinType_MAX = GROUP_JOIN_BY_ADMIN;
+const int GroupJoinType_ARRAYSIZE = GroupJoinType_MAX + 1;
+
+enum GroupJoinCheckType {
+  GROUP_JOIN_CHECK_NONE = 0,
+  GROUP_JOIN_CHECK_BY_ADMIN = 1,
+  GROUP_COULD_NOT_JOIN = 2
+};
+bool GroupJoinCheckType_IsValid(int value);
+const GroupJoinCheckType GroupJoinCheckType_MIN = GROUP_JOIN_CHECK_NONE;
+const GroupJoinCheckType GroupJoinCheckType_MAX = GROUP_COULD_NOT_JOIN;
+const int GroupJoinCheckType_ARRAYSIZE = GroupJoinCheckType_MAX + 1;
+
+enum GroupUpdateType {
+  GROUP_UPDATE_BY_ALL = 0,
+  GROUP_UPDATE_BY_ADMIN = 1
+};
+bool GroupUpdateType_IsValid(int value);
+const GroupUpdateType GroupUpdateType_MIN = GROUP_UPDATE_BY_ALL;
+const GroupUpdateType GroupUpdateType_MAX = GROUP_UPDATE_BY_ADMIN;
+const int GroupUpdateType_ARRAYSIZE = GroupUpdateType_MAX + 1;
 
 enum GroupModifyType {
   GROUP_MODIFY_TYPE_ADD = 1,
@@ -649,6 +698,42 @@ class UserInfo : public ::google::protobuf::MessageLite {
   inline ::std::string* release_sign_info();
   inline void set_allocated_sign_info(::std::string* sign_info);
 
+  // required string position = 12;
+  inline bool has_position() const;
+  inline void clear_position();
+  static const int kPositionFieldNumber = 12;
+  inline const ::std::string& position() const;
+  inline void set_position(const ::std::string& value);
+  inline void set_position(const char* value);
+  inline void set_position(const char* value, size_t size);
+  inline ::std::string* mutable_position();
+  inline ::std::string* release_position();
+  inline void set_allocated_position(::std::string* position);
+
+  // required string address = 13;
+  inline bool has_address() const;
+  inline void clear_address();
+  static const int kAddressFieldNumber = 13;
+  inline const ::std::string& address() const;
+  inline void set_address(const ::std::string& value);
+  inline void set_address(const char* value);
+  inline void set_address(const char* value, size_t size);
+  inline ::std::string* mutable_address();
+  inline ::std::string* release_address();
+  inline void set_allocated_address(::std::string* address);
+
+  // required string office_phone = 14;
+  inline bool has_office_phone() const;
+  inline void clear_office_phone();
+  static const int kOfficePhoneFieldNumber = 14;
+  inline const ::std::string& office_phone() const;
+  inline void set_office_phone(const ::std::string& value);
+  inline void set_office_phone(const char* value);
+  inline void set_office_phone(const char* value, size_t size);
+  inline ::std::string* mutable_office_phone();
+  inline ::std::string* release_office_phone();
+  inline void set_allocated_office_phone(::std::string* office_phone);
+
   // @@protoc_insertion_point(class_scope:IM.BaseDefine.UserInfo)
  private:
   inline void set_has_user_id();
@@ -673,6 +758,12 @@ class UserInfo : public ::google::protobuf::MessageLite {
   inline void clear_has_status();
   inline void set_has_sign_info();
   inline void clear_has_sign_info();
+  inline void set_has_position();
+  inline void clear_has_position();
+  inline void set_has_address();
+  inline void clear_has_address();
+  inline void set_has_office_phone();
+  inline void clear_has_office_phone();
 
   ::std::string _unknown_fields_;
 
@@ -689,6 +780,9 @@ class UserInfo : public ::google::protobuf::MessageLite {
   ::std::string* user_tel_;
   ::std::string* user_domain_;
   ::std::string* sign_info_;
+  ::std::string* position_;
+  ::std::string* address_;
+  ::std::string* office_phone_;
   #ifdef GOOGLE_PROTOBUF_NO_STATIC_INITIALIZER
   friend void  protobuf_AddDesc_IM_2eBaseDefine_2eproto_impl();
   #else
@@ -824,6 +918,13 @@ class ContactSessionInfo : public ::google::protobuf::MessageLite {
   inline ::google::protobuf::uint32 latest_msg_from_user_id() const;
   inline void set_latest_msg_from_user_id(::google::protobuf::uint32 value);
 
+  // optional uint32 is_top = 9;
+  inline bool has_is_top() const;
+  inline void clear_is_top();
+  static const int kIsTopFieldNumber = 9;
+  inline ::google::protobuf::uint32 is_top() const;
+  inline void set_is_top(::google::protobuf::uint32 value);
+
   // @@protoc_insertion_point(class_scope:IM.BaseDefine.ContactSessionInfo)
  private:
   inline void set_has_session_id();
@@ -842,6 +943,8 @@ class ContactSessionInfo : public ::google::protobuf::MessageLite {
   inline void clear_has_latest_msg_type();
   inline void set_has_latest_msg_from_user_id();
   inline void clear_has_latest_msg_from_user_id();
+  inline void set_has_is_top();
+  inline void clear_has_is_top();
 
   ::std::string _unknown_fields_;
 
@@ -855,6 +958,7 @@ class ContactSessionInfo : public ::google::protobuf::MessageLite {
   ::google::protobuf::uint32 latest_msg_id_;
   int latest_msg_type_;
   ::google::protobuf::uint32 latest_msg_from_user_id_;
+  ::google::protobuf::uint32 is_top_;
   #ifdef GOOGLE_PROTOBUF_NO_STATIC_INITIALIZER
   friend void  protobuf_AddDesc_IM_2eBaseDefine_2eproto_impl();
   #else
@@ -1337,6 +1441,27 @@ class MsgInfo : public ::google::protobuf::MessageLite {
   inline ::std::string* release_msg_data();
   inline void set_allocated_msg_data(::std::string* msg_data);
 
+  // optional uint32 is_read = 6;
+  inline bool has_is_read() const;
+  inline void clear_is_read();
+  static const int kIsReadFieldNumber = 6;
+  inline ::google::protobuf::uint32 is_read() const;
+  inline void set_is_read(::google::protobuf::uint32 value);
+
+  // optional uint32 read_count = 7;
+  inline bool has_read_count() const;
+  inline void clear_read_count();
+  static const int kReadCountFieldNumber = 7;
+  inline ::google::protobuf::uint32 read_count() const;
+  inline void set_read_count(::google::protobuf::uint32 value);
+
+  // optional uint32 unread_count = 8;
+  inline bool has_unread_count() const;
+  inline void clear_unread_count();
+  static const int kUnreadCountFieldNumber = 8;
+  inline ::google::protobuf::uint32 unread_count() const;
+  inline void set_unread_count(::google::protobuf::uint32 value);
+
   // @@protoc_insertion_point(class_scope:IM.BaseDefine.MsgInfo)
  private:
   inline void set_has_msg_id();
@@ -1349,6 +1474,12 @@ class MsgInfo : public ::google::protobuf::MessageLite {
   inline void clear_has_msg_type();
   inline void set_has_msg_data();
   inline void clear_has_msg_data();
+  inline void set_has_is_read();
+  inline void clear_has_is_read();
+  inline void set_has_read_count();
+  inline void clear_has_read_count();
+  inline void set_has_unread_count();
+  inline void clear_has_unread_count();
 
   ::std::string _unknown_fields_;
 
@@ -1359,6 +1490,9 @@ class MsgInfo : public ::google::protobuf::MessageLite {
   ::google::protobuf::uint32 create_time_;
   int msg_type_;
   ::std::string* msg_data_;
+  ::google::protobuf::uint32 is_read_;
+  ::google::protobuf::uint32 read_count_;
+  ::google::protobuf::uint32 unread_count_;
   #ifdef GOOGLE_PROTOBUF_NO_STATIC_INITIALIZER
   friend void  protobuf_AddDesc_IM_2eBaseDefine_2eproto_impl();
   #else
@@ -1605,6 +1739,39 @@ class GroupInfo : public ::google::protobuf::MessageLite {
   inline ::google::protobuf::RepeatedField< ::google::protobuf::uint32 >*
       mutable_group_member_list();
 
+  // required .IM.BaseDefine.GroupJoinType group_join_type = 9;
+  inline bool has_group_join_type() const;
+  inline void clear_group_join_type();
+  static const int kGroupJoinTypeFieldNumber = 9;
+  inline ::IM::BaseDefine::GroupJoinType group_join_type() const;
+  inline void set_group_join_type(::IM::BaseDefine::GroupJoinType value);
+
+  // required .IM.BaseDefine.GroupJoinCheckType group_join_check_type = 10;
+  inline bool has_group_join_check_type() const;
+  inline void clear_group_join_check_type();
+  static const int kGroupJoinCheckTypeFieldNumber = 10;
+  inline ::IM::BaseDefine::GroupJoinCheckType group_join_check_type() const;
+  inline void set_group_join_check_type(::IM::BaseDefine::GroupJoinCheckType value);
+
+  // required .IM.BaseDefine.GroupUpdateType group_update_type = 11;
+  inline bool has_group_update_type() const;
+  inline void clear_group_update_type();
+  static const int kGroupUpdateTypeFieldNumber = 11;
+  inline ::IM::BaseDefine::GroupUpdateType group_update_type() const;
+  inline void set_group_update_type(::IM::BaseDefine::GroupUpdateType value);
+
+  // required string group_notice = 12;
+  inline bool has_group_notice() const;
+  inline void clear_group_notice();
+  static const int kGroupNoticeFieldNumber = 12;
+  inline const ::std::string& group_notice() const;
+  inline void set_group_notice(const ::std::string& value);
+  inline void set_group_notice(const char* value);
+  inline void set_group_notice(const char* value, size_t size);
+  inline ::std::string* mutable_group_notice();
+  inline ::std::string* release_group_notice();
+  inline void set_allocated_group_notice(::std::string* group_notice);
+
   // @@protoc_insertion_point(class_scope:IM.BaseDefine.GroupInfo)
  private:
   inline void set_has_group_id();
@@ -1621,6 +1788,14 @@ class GroupInfo : public ::google::protobuf::MessageLite {
   inline void clear_has_group_type();
   inline void set_has_shield_status();
   inline void clear_has_shield_status();
+  inline void set_has_group_join_type();
+  inline void clear_has_group_join_type();
+  inline void set_has_group_join_check_type();
+  inline void clear_has_group_join_check_type();
+  inline void set_has_group_update_type();
+  inline void clear_has_group_update_type();
+  inline void set_has_group_notice();
+  inline void clear_has_group_notice();
 
   ::std::string _unknown_fields_;
 
@@ -1634,6 +1809,10 @@ class GroupInfo : public ::google::protobuf::MessageLite {
   int group_type_;
   ::google::protobuf::RepeatedField< ::google::protobuf::uint32 > group_member_list_;
   ::google::protobuf::uint32 shield_status_;
+  int group_join_type_;
+  int group_join_check_type_;
+  int group_update_type_;
+  ::std::string* group_notice_;
   #ifdef GOOGLE_PROTOBUF_NO_STATIC_INITIALIZER
   friend void  protobuf_AddDesc_IM_2eBaseDefine_2eproto_impl();
   #else
@@ -3105,6 +3284,234 @@ inline void UserInfo::set_allocated_sign_info(::std::string* sign_info) {
   // @@protoc_insertion_point(field_set_allocated:IM.BaseDefine.UserInfo.sign_info)
 }
 
+// required string position = 12;
+inline bool UserInfo::has_position() const {
+  return (_has_bits_[0] & 0x00000800u) != 0;
+}
+inline void UserInfo::set_has_position() {
+  _has_bits_[0] |= 0x00000800u;
+}
+inline void UserInfo::clear_has_position() {
+  _has_bits_[0] &= ~0x00000800u;
+}
+inline void UserInfo::clear_position() {
+  if (position_ != &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
+    position_->clear();
+  }
+  clear_has_position();
+}
+inline const ::std::string& UserInfo::position() const {
+  // @@protoc_insertion_point(field_get:IM.BaseDefine.UserInfo.position)
+  return *position_;
+}
+inline void UserInfo::set_position(const ::std::string& value) {
+  set_has_position();
+  if (position_ == &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
+    position_ = new ::std::string;
+  }
+  position_->assign(value);
+  // @@protoc_insertion_point(field_set:IM.BaseDefine.UserInfo.position)
+}
+inline void UserInfo::set_position(const char* value) {
+  set_has_position();
+  if (position_ == &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
+    position_ = new ::std::string;
+  }
+  position_->assign(value);
+  // @@protoc_insertion_point(field_set_char:IM.BaseDefine.UserInfo.position)
+}
+inline void UserInfo::set_position(const char* value, size_t size) {
+  set_has_position();
+  if (position_ == &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
+    position_ = new ::std::string;
+  }
+  position_->assign(reinterpret_cast<const char*>(value), size);
+  // @@protoc_insertion_point(field_set_pointer:IM.BaseDefine.UserInfo.position)
+}
+inline ::std::string* UserInfo::mutable_position() {
+  set_has_position();
+  if (position_ == &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
+    position_ = new ::std::string;
+  }
+  // @@protoc_insertion_point(field_mutable:IM.BaseDefine.UserInfo.position)
+  return position_;
+}
+inline ::std::string* UserInfo::release_position() {
+  clear_has_position();
+  if (position_ == &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
+    return NULL;
+  } else {
+    ::std::string* temp = position_;
+    position_ = const_cast< ::std::string*>(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+    return temp;
+  }
+}
+inline void UserInfo::set_allocated_position(::std::string* position) {
+  if (position_ != &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
+    delete position_;
+  }
+  if (position) {
+    set_has_position();
+    position_ = position;
+  } else {
+    clear_has_position();
+    position_ = const_cast< ::std::string*>(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  }
+  // @@protoc_insertion_point(field_set_allocated:IM.BaseDefine.UserInfo.position)
+}
+
+// required string address = 13;
+inline bool UserInfo::has_address() const {
+  return (_has_bits_[0] & 0x00001000u) != 0;
+}
+inline void UserInfo::set_has_address() {
+  _has_bits_[0] |= 0x00001000u;
+}
+inline void UserInfo::clear_has_address() {
+  _has_bits_[0] &= ~0x00001000u;
+}
+inline void UserInfo::clear_address() {
+  if (address_ != &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
+    address_->clear();
+  }
+  clear_has_address();
+}
+inline const ::std::string& UserInfo::address() const {
+  // @@protoc_insertion_point(field_get:IM.BaseDefine.UserInfo.address)
+  return *address_;
+}
+inline void UserInfo::set_address(const ::std::string& value) {
+  set_has_address();
+  if (address_ == &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
+    address_ = new ::std::string;
+  }
+  address_->assign(value);
+  // @@protoc_insertion_point(field_set:IM.BaseDefine.UserInfo.address)
+}
+inline void UserInfo::set_address(const char* value) {
+  set_has_address();
+  if (address_ == &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
+    address_ = new ::std::string;
+  }
+  address_->assign(value);
+  // @@protoc_insertion_point(field_set_char:IM.BaseDefine.UserInfo.address)
+}
+inline void UserInfo::set_address(const char* value, size_t size) {
+  set_has_address();
+  if (address_ == &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
+    address_ = new ::std::string;
+  }
+  address_->assign(reinterpret_cast<const char*>(value), size);
+  // @@protoc_insertion_point(field_set_pointer:IM.BaseDefine.UserInfo.address)
+}
+inline ::std::string* UserInfo::mutable_address() {
+  set_has_address();
+  if (address_ == &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
+    address_ = new ::std::string;
+  }
+  // @@protoc_insertion_point(field_mutable:IM.BaseDefine.UserInfo.address)
+  return address_;
+}
+inline ::std::string* UserInfo::release_address() {
+  clear_has_address();
+  if (address_ == &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
+    return NULL;
+  } else {
+    ::std::string* temp = address_;
+    address_ = const_cast< ::std::string*>(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+    return temp;
+  }
+}
+inline void UserInfo::set_allocated_address(::std::string* address) {
+  if (address_ != &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
+    delete address_;
+  }
+  if (address) {
+    set_has_address();
+    address_ = address;
+  } else {
+    clear_has_address();
+    address_ = const_cast< ::std::string*>(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  }
+  // @@protoc_insertion_point(field_set_allocated:IM.BaseDefine.UserInfo.address)
+}
+
+// required string office_phone = 14;
+inline bool UserInfo::has_office_phone() const {
+  return (_has_bits_[0] & 0x00002000u) != 0;
+}
+inline void UserInfo::set_has_office_phone() {
+  _has_bits_[0] |= 0x00002000u;
+}
+inline void UserInfo::clear_has_office_phone() {
+  _has_bits_[0] &= ~0x00002000u;
+}
+inline void UserInfo::clear_office_phone() {
+  if (office_phone_ != &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
+    office_phone_->clear();
+  }
+  clear_has_office_phone();
+}
+inline const ::std::string& UserInfo::office_phone() const {
+  // @@protoc_insertion_point(field_get:IM.BaseDefine.UserInfo.office_phone)
+  return *office_phone_;
+}
+inline void UserInfo::set_office_phone(const ::std::string& value) {
+  set_has_office_phone();
+  if (office_phone_ == &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
+    office_phone_ = new ::std::string;
+  }
+  office_phone_->assign(value);
+  // @@protoc_insertion_point(field_set:IM.BaseDefine.UserInfo.office_phone)
+}
+inline void UserInfo::set_office_phone(const char* value) {
+  set_has_office_phone();
+  if (office_phone_ == &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
+    office_phone_ = new ::std::string;
+  }
+  office_phone_->assign(value);
+  // @@protoc_insertion_point(field_set_char:IM.BaseDefine.UserInfo.office_phone)
+}
+inline void UserInfo::set_office_phone(const char* value, size_t size) {
+  set_has_office_phone();
+  if (office_phone_ == &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
+    office_phone_ = new ::std::string;
+  }
+  office_phone_->assign(reinterpret_cast<const char*>(value), size);
+  // @@protoc_insertion_point(field_set_pointer:IM.BaseDefine.UserInfo.office_phone)
+}
+inline ::std::string* UserInfo::mutable_office_phone() {
+  set_has_office_phone();
+  if (office_phone_ == &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
+    office_phone_ = new ::std::string;
+  }
+  // @@protoc_insertion_point(field_mutable:IM.BaseDefine.UserInfo.office_phone)
+  return office_phone_;
+}
+inline ::std::string* UserInfo::release_office_phone() {
+  clear_has_office_phone();
+  if (office_phone_ == &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
+    return NULL;
+  } else {
+    ::std::string* temp = office_phone_;
+    office_phone_ = const_cast< ::std::string*>(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+    return temp;
+  }
+}
+inline void UserInfo::set_allocated_office_phone(::std::string* office_phone) {
+  if (office_phone_ != &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
+    delete office_phone_;
+  }
+  if (office_phone) {
+    set_has_office_phone();
+    office_phone_ = office_phone;
+  } else {
+    clear_has_office_phone();
+    office_phone_ = const_cast< ::std::string*>(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  }
+  // @@protoc_insertion_point(field_set_allocated:IM.BaseDefine.UserInfo.office_phone)
+}
+
 // -------------------------------------------------------------------
 
 // ContactSessionInfo
@@ -3354,6 +3761,30 @@ inline void ContactSessionInfo::set_latest_msg_from_user_id(::google::protobuf::
   set_has_latest_msg_from_user_id();
   latest_msg_from_user_id_ = value;
   // @@protoc_insertion_point(field_set:IM.BaseDefine.ContactSessionInfo.latest_msg_from_user_id)
+}
+
+// optional uint32 is_top = 9;
+inline bool ContactSessionInfo::has_is_top() const {
+  return (_has_bits_[0] & 0x00000100u) != 0;
+}
+inline void ContactSessionInfo::set_has_is_top() {
+  _has_bits_[0] |= 0x00000100u;
+}
+inline void ContactSessionInfo::clear_has_is_top() {
+  _has_bits_[0] &= ~0x00000100u;
+}
+inline void ContactSessionInfo::clear_is_top() {
+  is_top_ = 0u;
+  clear_has_is_top();
+}
+inline ::google::protobuf::uint32 ContactSessionInfo::is_top() const {
+  // @@protoc_insertion_point(field_get:IM.BaseDefine.ContactSessionInfo.is_top)
+  return is_top_;
+}
+inline void ContactSessionInfo::set_is_top(::google::protobuf::uint32 value) {
+  set_has_is_top();
+  is_top_ = value;
+  // @@protoc_insertion_point(field_set:IM.BaseDefine.ContactSessionInfo.is_top)
 }
 
 // -------------------------------------------------------------------
@@ -3890,6 +4321,78 @@ inline void MsgInfo::set_allocated_msg_data(::std::string* msg_data) {
   // @@protoc_insertion_point(field_set_allocated:IM.BaseDefine.MsgInfo.msg_data)
 }
 
+// optional uint32 is_read = 6;
+inline bool MsgInfo::has_is_read() const {
+  return (_has_bits_[0] & 0x00000020u) != 0;
+}
+inline void MsgInfo::set_has_is_read() {
+  _has_bits_[0] |= 0x00000020u;
+}
+inline void MsgInfo::clear_has_is_read() {
+  _has_bits_[0] &= ~0x00000020u;
+}
+inline void MsgInfo::clear_is_read() {
+  is_read_ = 0u;
+  clear_has_is_read();
+}
+inline ::google::protobuf::uint32 MsgInfo::is_read() const {
+  // @@protoc_insertion_point(field_get:IM.BaseDefine.MsgInfo.is_read)
+  return is_read_;
+}
+inline void MsgInfo::set_is_read(::google::protobuf::uint32 value) {
+  set_has_is_read();
+  is_read_ = value;
+  // @@protoc_insertion_point(field_set:IM.BaseDefine.MsgInfo.is_read)
+}
+
+// optional uint32 read_count = 7;
+inline bool MsgInfo::has_read_count() const {
+  return (_has_bits_[0] & 0x00000040u) != 0;
+}
+inline void MsgInfo::set_has_read_count() {
+  _has_bits_[0] |= 0x00000040u;
+}
+inline void MsgInfo::clear_has_read_count() {
+  _has_bits_[0] &= ~0x00000040u;
+}
+inline void MsgInfo::clear_read_count() {
+  read_count_ = 0u;
+  clear_has_read_count();
+}
+inline ::google::protobuf::uint32 MsgInfo::read_count() const {
+  // @@protoc_insertion_point(field_get:IM.BaseDefine.MsgInfo.read_count)
+  return read_count_;
+}
+inline void MsgInfo::set_read_count(::google::protobuf::uint32 value) {
+  set_has_read_count();
+  read_count_ = value;
+  // @@protoc_insertion_point(field_set:IM.BaseDefine.MsgInfo.read_count)
+}
+
+// optional uint32 unread_count = 8;
+inline bool MsgInfo::has_unread_count() const {
+  return (_has_bits_[0] & 0x00000080u) != 0;
+}
+inline void MsgInfo::set_has_unread_count() {
+  _has_bits_[0] |= 0x00000080u;
+}
+inline void MsgInfo::clear_has_unread_count() {
+  _has_bits_[0] &= ~0x00000080u;
+}
+inline void MsgInfo::clear_unread_count() {
+  unread_count_ = 0u;
+  clear_has_unread_count();
+}
+inline ::google::protobuf::uint32 MsgInfo::unread_count() const {
+  // @@protoc_insertion_point(field_get:IM.BaseDefine.MsgInfo.unread_count)
+  return unread_count_;
+}
+inline void MsgInfo::set_unread_count(::google::protobuf::uint32 value) {
+  set_has_unread_count();
+  unread_count_ = value;
+  // @@protoc_insertion_point(field_set:IM.BaseDefine.MsgInfo.unread_count)
+}
+
 // -------------------------------------------------------------------
 
 // GroupVersionInfo
@@ -4247,6 +4750,157 @@ inline ::google::protobuf::RepeatedField< ::google::protobuf::uint32 >*
 GroupInfo::mutable_group_member_list() {
   // @@protoc_insertion_point(field_mutable_list:IM.BaseDefine.GroupInfo.group_member_list)
   return &group_member_list_;
+}
+
+// required .IM.BaseDefine.GroupJoinType group_join_type = 9;
+inline bool GroupInfo::has_group_join_type() const {
+  return (_has_bits_[0] & 0x00000100u) != 0;
+}
+inline void GroupInfo::set_has_group_join_type() {
+  _has_bits_[0] |= 0x00000100u;
+}
+inline void GroupInfo::clear_has_group_join_type() {
+  _has_bits_[0] &= ~0x00000100u;
+}
+inline void GroupInfo::clear_group_join_type() {
+  group_join_type_ = 0;
+  clear_has_group_join_type();
+}
+inline ::IM::BaseDefine::GroupJoinType GroupInfo::group_join_type() const {
+  // @@protoc_insertion_point(field_get:IM.BaseDefine.GroupInfo.group_join_type)
+  return static_cast< ::IM::BaseDefine::GroupJoinType >(group_join_type_);
+}
+inline void GroupInfo::set_group_join_type(::IM::BaseDefine::GroupJoinType value) {
+  assert(::IM::BaseDefine::GroupJoinType_IsValid(value));
+  set_has_group_join_type();
+  group_join_type_ = value;
+  // @@protoc_insertion_point(field_set:IM.BaseDefine.GroupInfo.group_join_type)
+}
+
+// required .IM.BaseDefine.GroupJoinCheckType group_join_check_type = 10;
+inline bool GroupInfo::has_group_join_check_type() const {
+  return (_has_bits_[0] & 0x00000200u) != 0;
+}
+inline void GroupInfo::set_has_group_join_check_type() {
+  _has_bits_[0] |= 0x00000200u;
+}
+inline void GroupInfo::clear_has_group_join_check_type() {
+  _has_bits_[0] &= ~0x00000200u;
+}
+inline void GroupInfo::clear_group_join_check_type() {
+  group_join_check_type_ = 0;
+  clear_has_group_join_check_type();
+}
+inline ::IM::BaseDefine::GroupJoinCheckType GroupInfo::group_join_check_type() const {
+  // @@protoc_insertion_point(field_get:IM.BaseDefine.GroupInfo.group_join_check_type)
+  return static_cast< ::IM::BaseDefine::GroupJoinCheckType >(group_join_check_type_);
+}
+inline void GroupInfo::set_group_join_check_type(::IM::BaseDefine::GroupJoinCheckType value) {
+  assert(::IM::BaseDefine::GroupJoinCheckType_IsValid(value));
+  set_has_group_join_check_type();
+  group_join_check_type_ = value;
+  // @@protoc_insertion_point(field_set:IM.BaseDefine.GroupInfo.group_join_check_type)
+}
+
+// required .IM.BaseDefine.GroupUpdateType group_update_type = 11;
+inline bool GroupInfo::has_group_update_type() const {
+  return (_has_bits_[0] & 0x00000400u) != 0;
+}
+inline void GroupInfo::set_has_group_update_type() {
+  _has_bits_[0] |= 0x00000400u;
+}
+inline void GroupInfo::clear_has_group_update_type() {
+  _has_bits_[0] &= ~0x00000400u;
+}
+inline void GroupInfo::clear_group_update_type() {
+  group_update_type_ = 0;
+  clear_has_group_update_type();
+}
+inline ::IM::BaseDefine::GroupUpdateType GroupInfo::group_update_type() const {
+  // @@protoc_insertion_point(field_get:IM.BaseDefine.GroupInfo.group_update_type)
+  return static_cast< ::IM::BaseDefine::GroupUpdateType >(group_update_type_);
+}
+inline void GroupInfo::set_group_update_type(::IM::BaseDefine::GroupUpdateType value) {
+  assert(::IM::BaseDefine::GroupUpdateType_IsValid(value));
+  set_has_group_update_type();
+  group_update_type_ = value;
+  // @@protoc_insertion_point(field_set:IM.BaseDefine.GroupInfo.group_update_type)
+}
+
+// required string group_notice = 12;
+inline bool GroupInfo::has_group_notice() const {
+  return (_has_bits_[0] & 0x00000800u) != 0;
+}
+inline void GroupInfo::set_has_group_notice() {
+  _has_bits_[0] |= 0x00000800u;
+}
+inline void GroupInfo::clear_has_group_notice() {
+  _has_bits_[0] &= ~0x00000800u;
+}
+inline void GroupInfo::clear_group_notice() {
+  if (group_notice_ != &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
+    group_notice_->clear();
+  }
+  clear_has_group_notice();
+}
+inline const ::std::string& GroupInfo::group_notice() const {
+  // @@protoc_insertion_point(field_get:IM.BaseDefine.GroupInfo.group_notice)
+  return *group_notice_;
+}
+inline void GroupInfo::set_group_notice(const ::std::string& value) {
+  set_has_group_notice();
+  if (group_notice_ == &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
+    group_notice_ = new ::std::string;
+  }
+  group_notice_->assign(value);
+  // @@protoc_insertion_point(field_set:IM.BaseDefine.GroupInfo.group_notice)
+}
+inline void GroupInfo::set_group_notice(const char* value) {
+  set_has_group_notice();
+  if (group_notice_ == &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
+    group_notice_ = new ::std::string;
+  }
+  group_notice_->assign(value);
+  // @@protoc_insertion_point(field_set_char:IM.BaseDefine.GroupInfo.group_notice)
+}
+inline void GroupInfo::set_group_notice(const char* value, size_t size) {
+  set_has_group_notice();
+  if (group_notice_ == &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
+    group_notice_ = new ::std::string;
+  }
+  group_notice_->assign(reinterpret_cast<const char*>(value), size);
+  // @@protoc_insertion_point(field_set_pointer:IM.BaseDefine.GroupInfo.group_notice)
+}
+inline ::std::string* GroupInfo::mutable_group_notice() {
+  set_has_group_notice();
+  if (group_notice_ == &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
+    group_notice_ = new ::std::string;
+  }
+  // @@protoc_insertion_point(field_mutable:IM.BaseDefine.GroupInfo.group_notice)
+  return group_notice_;
+}
+inline ::std::string* GroupInfo::release_group_notice() {
+  clear_has_group_notice();
+  if (group_notice_ == &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
+    return NULL;
+  } else {
+    ::std::string* temp = group_notice_;
+    group_notice_ = const_cast< ::std::string*>(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+    return temp;
+  }
+}
+inline void GroupInfo::set_allocated_group_notice(::std::string* group_notice) {
+  if (group_notice_ != &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
+    delete group_notice_;
+  }
+  if (group_notice) {
+    set_has_group_notice();
+    group_notice_ = group_notice;
+  } else {
+    clear_has_group_notice();
+    group_notice_ = const_cast< ::std::string*>(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  }
+  // @@protoc_insertion_point(field_set_allocated:IM.BaseDefine.GroupInfo.group_notice)
 }
 
 // -------------------------------------------------------------------

@@ -343,7 +343,9 @@ void CMsgConn::HandlePdu(CImPdu* pPdu)
         case CID_BUDDY_LIST_CHANGE_SIGN_INFO_REQUEST:
             _HandleChangeSignInfoRequest(pPdu);
             break;
-            
+		case CID_BUDDY_CONTACT_SESSION_TOP:
+            _HandleContactSessionTopRequest(pPdu);
+			break;
         case CID_BUDDY_LIST_USERS_STATUS_REQUEST:
             _HandleClientUsersStatusRequest(pPdu);
             break;
@@ -366,7 +368,10 @@ void CMsgConn::HandlePdu(CImPdu* pPdu)
         case CID_GROUP_SHIELD_GROUP_REQUEST:
             s_group_chat->HandleClientGroupShieldGroupRequest(pPdu, this);
             break;
-            
+		//群组信息修改
+        case CID_GROUP_CHANGE_REQUEST:
+            s_group_chat->HandleClientGroupChangeRequest(pPdu, this);
+            break; 
         case CID_FILE_REQUEST:
             s_file_handler->HandleClientFileRequest(this, pPdu);
             break;
@@ -379,6 +384,17 @@ void CMsgConn::HandlePdu(CImPdu* pPdu)
         case CID_FILE_DEL_OFFLINE_REQ:
             s_file_handler->HandleClientFileDelOfflineReq(this, pPdu);
             break;
+		//for collect
+		case CID_COLLECT_DATA:
+            _HandleClientCollectData(pPdu);
+            break;
+		case CID_COLLECT_LIST_REQUEST:
+			_HandleClientCollectRequest(pPdu);
+			break;
+		case CID_MSG_DELETE:
+		case CID_MSG_CANCEL:
+			_HandleClientMsgUpdate(pPdu);
+			break;
         default:
             log("wrong msg, cmd id=%d, user id=%u. ", pPdu->GetCommandId(), GetUserId());
             break;
@@ -556,6 +572,25 @@ void CMsgConn::_HandleClientRecentContactSessionRequest(CImPdu *pPdu)
     pConn->SendPdu(pPdu);
 }
 
+void CMsgConn::_HandleClientMsgUpdate(CImPdu *pPdu)
+{
+    CDBServConn* pConn = get_db_serv_conn_for_login();
+    if (!pConn) {
+        return;
+    }
+    
+    IM::Message::IMMsgDataUpdate msg;
+    CHECK_PB_PARSE_MSG(msg.ParseFromArray(pPdu->GetBodyData(), pPdu->GetBodyLength()));
+    log("_HandleClientMsgUpdate, user_id=%u, msg_id=%u. ", GetUserId(), msg.msg_id());
+
+    //获取socket id
+    CDbAttachData attach_data(ATTACH_TYPE_HANDLE, m_handle, 0);
+    msg.set_attach_data(attach_data.GetBuffer(), attach_data.GetLength());
+    pPdu->SetPBMsg(&msg);
+    pConn->SendPdu(pPdu);
+}
+
+
 void CMsgConn::_HandleClientMsgData(CImPdu* pPdu)
 {
     IM::Message::IMMsgData msg;
@@ -599,6 +634,39 @@ void CMsgConn::_HandleClientMsgData(CImPdu* pPdu)
 		pDbConn->SendPdu(pPdu);
 	}
 }
+
+void CMsgConn::_HandleClientCollectData(CImPdu* pPdu)
+{
+    IM::Message::IMMsgData msg;
+    CHECK_PB_PARSE_MSG(msg.ParseFromArray(pPdu->GetBodyData(), pPdu->GetBodyLength()));
+	if (msg.msg_data().length() == 0) {
+		log("discard an empty message, uid=%u ", GetUserId());
+		return;
+	}
+
+	uint32_t from_user_id = msg.from_user_id();
+	uint32_t to_session_id = msg.to_session_id();
+    uint32_t msg_id = msg.msg_id();
+	uint8_t msg_type = msg.msg_type();
+    string msg_data = msg.msg_data();
+	uint32_t msg_time = msg.create_time();
+
+	if (g_log_msg_toggle) {
+		log("HandleClientCollectData, %d->%d, msg_type=%u, msg_id=%u. ", GetUserId(), to_session_id, msg_type, msg_id);
+	}
+
+    CDbAttachData attach_data(ATTACH_TYPE_HANDLE, m_handle, 0);
+    msg.set_user_id(GetUserId());
+    msg.set_create_time(msg_time);
+    msg.set_attach_data(attach_data.GetBuffer(), attach_data.GetLength());
+    pPdu->SetPBMsg(&msg);
+	// send to DB storage server
+	CDBServConn* pDbConn = get_db_serv_conn();
+	if (pDbConn) {
+		pDbConn->SendPdu(pPdu);
+	}
+}
+
 
 void CMsgConn::_HandleClientMsgDataAck(CImPdu* pPdu)
 {
@@ -645,6 +713,27 @@ void CMsgConn::_HandleClientGetMsgListRequest(CImPdu *pPdu)
         pDBConn->SendPdu(pPdu);
     }
 }
+
+void CMsgConn::_HandleClientCollectRequest(CImPdu *pPdu)
+{
+	IM::Message::IMGetMsgListReq msg;
+	CHECK_PB_PARSE_MSG(msg.ParseFromArray(pPdu->GetBodyData(), pPdu->GetBodyLength()));
+	uint32_t session_id = msg.session_id();
+	uint32_t msg_id_begin = msg.msg_id_begin();
+	uint32_t msg_cnt = msg.msg_cnt();
+	uint32_t session_type = msg.session_type();
+	log("_HandleClientCollectRequest, req_id=%u, session_type=%u, session_id=%u, msg_id_begin=%u, msg_cnt=%u. ",
+		GetUserId(), session_type, session_id, msg_id_begin, msg_cnt);
+	CDBServConn* pDBConn = get_db_serv_conn_for_login();
+	if (pDBConn) {
+		CDbAttachData attach(ATTACH_TYPE_HANDLE, m_handle, 0);
+		msg.set_user_id(GetUserId());
+		msg.set_attach_data(attach.GetBuffer(), attach.GetLength());
+		pPdu->SetPBMsg(&msg);
+		pDBConn->SendPdu(pPdu);
+	}
+}
+
 
 void CMsgConn::_HandleClientGetMsgByMsgIdRequest(CImPdu *pPdu)
 {
@@ -696,24 +785,32 @@ void CMsgConn::_HandleClientMsgReadAck(CImPdu* pPdu)
         pPdu->SetPBMsg(&msg);
 		pDBConn->SendPdu(pPdu);
 	}
-    IM::Message::IMMsgDataReadNotify msg2;
-    msg2.set_user_id(GetUserId());
-    msg2.set_session_id(session_id);
-    msg2.set_msg_id(msg_id);
-    msg2.set_session_type((IM::BaseDefine::SessionType)session_type);
-    CImPdu pdu;
-    pdu.SetPBMsg(&msg2);
-    pdu.SetServiceId(SID_MSG);
-    pdu.SetCommandId(CID_MSG_READ_NOTIFY);
-    CImUser* pUser = CImUserManager::GetInstance()->GetImUserById(GetUserId());
-    if (pUser)
-    {
-        pUser->BroadcastPdu(&pdu, this);
-    }
-    CRouteServConn* pRouteConn = get_route_serv_conn();
-    if (pRouteConn) {
-        pRouteConn->SendPdu(&pdu);
-    }
+	//个人消息已读，需要通知发送者变更状态，但是群消息有已读未读的数量，所以不再实时反馈，变为处理完redis后反馈
+	if(session_type == IM::BaseDefine::SESSION_TYPE_SINGLE){
+	    IM::Message::IMMsgDataReadNotify msg2;
+	    msg2.set_user_id(GetUserId());
+	    msg2.set_session_id(session_id);
+	    msg2.set_msg_id(msg_id);
+	    msg2.set_session_type((IM::BaseDefine::SessionType)session_type);
+	    CImPdu pdu;
+	    pdu.SetPBMsg(&msg2);
+	    pdu.SetServiceId(SID_MSG);
+	    pdu.SetCommandId(CID_MSG_READ_NOTIFY);
+	    CImUser* pUser = CImUserManager::GetInstance()->GetImUserById(GetUserId());
+	    if (pUser)
+	    {
+	        pUser->BroadcastPdu(&pdu, this);
+	    }
+		CImUser* pFromUser = CImUserManager::GetInstance()->GetImUserById(session_id);
+	    if (pFromUser)
+	    {
+	        pFromUser->BroadcastPdu(&pdu, this);
+	    }
+	    CRouteServConn* pRouteConn = get_route_serv_conn();
+	    if (pRouteConn) {
+	        pRouteConn->SendPdu(&pdu);
+	    }
+	}
     
     if (session_type == IM::BaseDefine::SESSION_TYPE_SINGLE)
     {
@@ -966,6 +1063,24 @@ void CMsgConn::_HandleChangeSignInfoRequest(CImPdu* pPdu) {
                 pDBConn->SendPdu(pPdu);
             }
     }
+
+void CMsgConn::_HandleContactSessionTopRequest(CImPdu* pPdu) {
+	IM::Buddy::IMContactSessionTopPro msg;
+	CHECK_PB_PARSE_MSG(msg.ParseFromArray(pPdu->GetBodyData(), pPdu->GetBodyLength()));
+	uint32_t user_id = msg.user_id();
+	uint32_t session_id = msg.session_id();
+	uint32_t is_top = msg.is_top();
+	log("_HandleContactSessionTopRequest, user_id=%u session_id=%d is_top=%d ", user_id,session_id,is_top);
+	CDBServConn* pDBConn = get_db_serv_conn();
+	if (pDBConn) {
+		CPduAttachData attach(ATTACH_TYPE_HANDLE, m_handle,0, NULL);
+		msg.set_attach_data(attach.GetBuffer(), attach.GetLength());
+
+		pPdu->SetPBMsg(&msg);
+		pDBConn->SendPdu(pPdu);
+	}
+}
+
 void CMsgConn::_HandlePushShieldRequest(CImPdu* pPdu) {
     IM::Login::IMPushShieldReq msg;
     CHECK_PB_PARSE_MSG(msg.ParseFromArray(pPdu->GetBodyData(), pPdu->GetBodyLength()));

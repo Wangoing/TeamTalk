@@ -49,6 +49,10 @@ private:
     
     void _HandlePushShieldResponse(CImPdu* pPdu);
     void _HandleQueryPushShieldResponse(CImPdu* pPdu);
+	void _HandleCollectData(CImPdu* pPdu);
+	void _HandleGetCollectListResponse(CImPdu *pPdu);
+	void _HandleMsgUpdate(CImPdu *pPdu);
+	void _HandleContactSessionTopReponse(CImPdu* pPdu);
 private:
 	bool 		m_bOpen;
 	uint32_t	m_serv_idx;

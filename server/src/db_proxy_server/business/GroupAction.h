@@ -28,6 +28,8 @@ namespace DB_PROXY {
     
     void getGroupPush(CImPdu* pPdu, uint32_t conn_uuid);
 
+	void changeGroup(CImPdu* pPdu, uint32_t conn_uuid);
+
 };
 
 

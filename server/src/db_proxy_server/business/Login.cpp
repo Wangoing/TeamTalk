@@ -89,9 +89,7 @@ void doLogin(CImPdu* pPdu, uint32_t conn_uuid)
             }
         } while(false);
         
-        log("%s request login.", strDomain.c_str());
-        
-        
+        log("%s request login. strPass=[%s]", strDomain.c_str(),strPass.c_str());
         
         IM::BaseDefine::UserInfo cUser;
         
@@ -111,6 +109,10 @@ void doLogin(CImPdu* pPdu, uint32_t conn_uuid)
             pUser->set_status(0);
 
             pUser->set_sign_info(cUser.sign_info());
+
+			pUser->set_address(cUser.address());
+			pUser->set_position(cUser.position());
+			pUser->set_office_phone(cUser.office_phone());
            
             msgResp.set_result_code(0);
             msgResp.set_result_string("成功");
@@ -132,13 +134,13 @@ void doLogin(CImPdu* pPdu, uint32_t conn_uuid)
             msgResp.set_result_code(1);
             msgResp.set_result_string("用户名/密码错误");
         }
+		log("%s reponse login. strPass=[%s]", strDomain.c_str(),strPass.c_str());
     }
     else
     {
         msgResp.set_result_code(2);
         msgResp.set_result_string("服务端内部错误");
     }
-    
     
     pPduResp->SetPBMsg(&msgResp);
     pPduResp->SetSeqNum(pPdu->GetSeqNum());

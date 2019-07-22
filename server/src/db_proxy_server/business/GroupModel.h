@@ -47,11 +47,14 @@ public:
     void updateGroupChat(uint32_t nGroupId);
     bool isValidateGroupId(uint32_t nGroupId);
     uint32_t getUserJoinTime(uint32_t nGroupId, uint32_t nUserId);
+	bool getGroupInfoByGroupId(uint32_t nGroupId, IM::BaseDefine::GroupInfo& cGroupInfo);
+	bool updateGroupInfo(uint32_t nGroupId, uint32_t nGroupJoinType, uint32_t nGroupJoinCheckType, uint32_t nGroupUpdateType, const string& strGroupName, 
+		const string& strGroupNotice);
 private:
     CGroupModel();
     
     bool insertNewGroup(uint32_t reqUserId, const string& groupName, const string& groupAvatar, uint32_t groupType, uint32_t memCnt, uint32_t& groupId);
-    bool insertNewMember(uint32_t nGroupId,set<uint32_t>& setUsers);
+    bool insertNewMember(uint32_t nGroupId,set<uint32_t>& setUsers,uint32_t nCreateUser);
         string GenerateGroupAvatar(uint32_t groupId);
     void getGroupVersion(list<uint32_t>&lsGroupId, list<IM::BaseDefine::GroupVersionInfo>& lsGroup, uint32_t nGroupType);
     bool hasModifyPermission(uint32_t nUserId, uint32_t nGroupId, IM::BaseDefine::GroupModifyType nType);

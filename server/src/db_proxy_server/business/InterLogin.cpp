@@ -14,17 +14,20 @@
 
 bool CInterLoginStrategy::doLogin(const std::string &strName, const std::string &strPass, IM::BaseDefine::UserInfo& user)
 {
+	log("doLogin begin strName=[%s]", strName.c_str());
     bool bRet = false;
     CDBManager* pDBManger = CDBManager::getInstance();
     CDBConn* pDBConn = pDBManger->GetDBConn("teamtalk_slave");
+	log("doLogin pDBConn strName=[%s] pDBConn=[%u]", strName.c_str(),pDBConn);
     if (pDBConn) {
         string strSql = "select * from IMUser where name='" + strName + "' and status=0";
         CResultSet* pResultSet = pDBConn->ExecuteQuery(strSql.c_str());
+		log("doLogin begin 3 strSql=[%s]", strSql.c_str());
         if(pResultSet)
         {
             string strResult, strSalt;
             uint32_t nId, nGender, nDeptId, nStatus;
-            string strNick, strAvatar, strEmail, strRealName, strTel, strDomain,strSignInfo;
+            string strNick, strAvatar, strEmail, strRealName, strTel, strDomain,strSignInfo,strPosition,strAddress,strOfficePhone;
             while (pResultSet->Next()) {
                 nId = pResultSet->GetInt("id");
                 strResult = pResultSet->GetString("password");
@@ -40,6 +43,9 @@ bool CInterLoginStrategy::doLogin(const std::string &strName, const std::string 
                 nDeptId = pResultSet->GetInt("departId");
                 nStatus = pResultSet->GetInt("status");
                 strSignInfo = pResultSet->GetString("sign_info");
+				strPosition = pResultSet->GetString("position");
+				strAddress = pResultSet->GetString("address");
+				strOfficePhone = pResultSet->GetString("office_phone");
 
             }
 
@@ -47,6 +53,7 @@ bool CInterLoginStrategy::doLogin(const std::string &strName, const std::string 
             char szMd5[33];
             CMd5::MD5_Calculate(strInPass.c_str(), strInPass.length(), szMd5);
             string strOutPass(szMd5);
+			log("strName=[%s],strOutPass=[%s],strInpass=[%s],strResult=[%s]",strName.c_str(),strOutPass.c_str(),strInPass.c_str(),strResult.c_str());
             if(strOutPass == strResult)
             {
                 bRet = true;
@@ -60,7 +67,10 @@ bool CInterLoginStrategy::doLogin(const std::string &strName, const std::string 
                 user.set_avatar_url(strAvatar);
                 user.set_department_id(nDeptId);
                 user.set_status(nStatus);
-  	        user.set_sign_info(strSignInfo);
+  	        	user.set_sign_info(strSignInfo);
+				user.set_position(strPosition);
+				user.set_address(strAddress);
+				user.set_office_phone(strOfficePhone);
 
             }
             delete  pResultSet;

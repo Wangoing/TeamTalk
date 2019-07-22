@@ -2,12 +2,12 @@
 # author: luoning
 # date: 03/24/2015
 
-MARIADB_DEVEL=MariaDB-10.0.34-centos6-x86_64-devel
-MARIADB_DEVEL_DOWNLOAD_PATH=https://mirrors.ustc.edu.cn/mariadb/yum/10.0/centos6-amd64/rpms/$MARIADB_DEVEL.rpm
-MARIADB_COMMON=MariaDB-10.0.34-centos6-x86_64-common
-MARIADB_COMMON_DOWNLOAD_PATH=https://mirrors.ustc.edu.cn/mariadb/yum/10.0/centos6-amd64/rpms/$MARIADB_COMMON.rpm
-MARIADB_COMPAT=MariaDB-10.0.34-centos6-x86_64-compat
-MARIADB_COMPAT_DOWNLOAD_PATH=https://mirrors.ustc.edu.cn/mariadb/yum/10.0/centos6-amd64/rpms/$MARIADB_COMPAT.rpm
+MARIADB_DEVEL=MariaDB-10.0.37-centos73-x86_64-devel MARIADB_DEVEL_DOWNLOAD_PATH=https://mirrors.ustc.edu.cn/mariadb/yum/10.0/centos7-amd64/rpms/$MARIADB_DEVEL.rpm 
+MARIADB_COMMON=MariaDB-10.0.37-centos73-x86_64-common 
+MARIADB_COMMON_DOWNLOAD_PATH=https://mirrors.ustc.edu.cn/mariadb/yum/10.0/centos7-amd64/rpms/$MARIADB_COMMON.rpm 
+MARIADB_COMPAT=MariaDB-10.0.37-centos73-x86_64-compat 
+MARIADB_COMPAT_DOWNLOAD_PATH=https://mirrors.ustc.edu.cn/mariadb/yum/10.0/centos7-amd64/rpms/$MARIADB_COMPAT.rpm
+
 CUR_DIR=
 
 check_user() {

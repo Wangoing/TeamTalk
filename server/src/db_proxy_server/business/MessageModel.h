@@ -39,6 +39,8 @@ public:
     void getUnReadCntAll(uint32_t nUserId, uint32_t &nTotalCnt);
     void getMsgByMsgId(uint32_t nUserId, uint32_t nPeerId, const list<uint32_t>& lsMsgId, list<IM::BaseDefine::MsgInfo>& lsMsg);
     bool resetMsgId(uint32_t nRelateId);
+	bool updateMessageStatus(uint32_t nRelateId,uint32_t nFromId, uint32_t nToId, uint32_t nUpdateTime,uint32_t nMsgId, uint32_t nStatus);
+	bool updateMessageToRead(uint32_t nRelateId,uint32_t nFromId, uint32_t nToId, uint32_t nUpdateTime,uint32_t nMsgId);
 private:
 	CMessageModel();
     void incMsgCount(uint32_t nFromId, uint32_t nToId);

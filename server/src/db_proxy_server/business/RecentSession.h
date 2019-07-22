@@ -20,6 +20,8 @@ namespace DB_PROXY {
     
     void deleteRecentSession(CImPdu* pPdu, uint32_t conn_uuid);
 
+	void updateSessionTop(CImPdu* pPdu, uint32_t conn_uuid);
+
 };
 
 

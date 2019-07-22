@@ -111,6 +111,9 @@ msgResp.set_user_id(from_user_id);
                 pUser->set_user_tel(it->user_tel());
                 pUser->set_user_domain(it->user_domain());
                 pUser->set_status(it->status());
+				pUser->set_address(it->address());
+				pUser->set_position(it->position());
+				pUser->set_office_phone(it->office_phone());
             }
             log("userId=%u,nLastUpdate=%u, last_time=%u, userCnt=%u", nReqId,nLastUpdate, nLastTime, msgResp.user_list_size());
             msgResp.set_attach_data(msg.attach_data());

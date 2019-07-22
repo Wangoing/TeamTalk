@@ -48,6 +48,7 @@ class IMGetLatestMsgIdReq;
 class IMGetLatestMsgIdRsp;
 class IMGetMsgByIdReq;
 class IMGetMsgByIdRsp;
+class IMMsgDataUpdate;
 
 // ===================================================================
 
@@ -159,6 +160,27 @@ class IMMsgData : public ::google::protobuf::MessageLite {
   inline ::std::string* release_msg_data();
   inline void set_allocated_msg_data(::std::string* msg_data);
 
+  // optional uint32 user_id = 7;
+  inline bool has_user_id() const;
+  inline void clear_user_id();
+  static const int kUserIdFieldNumber = 7;
+  inline ::google::protobuf::uint32 user_id() const;
+  inline void set_user_id(::google::protobuf::uint32 value);
+
+  // optional uint32 read_count = 8;
+  inline bool has_read_count() const;
+  inline void clear_read_count();
+  static const int kReadCountFieldNumber = 8;
+  inline ::google::protobuf::uint32 read_count() const;
+  inline void set_read_count(::google::protobuf::uint32 value);
+
+  // optional uint32 unread_count = 9;
+  inline bool has_unread_count() const;
+  inline void clear_unread_count();
+  static const int kUnreadCountFieldNumber = 9;
+  inline ::google::protobuf::uint32 unread_count() const;
+  inline void set_unread_count(::google::protobuf::uint32 value);
+
   // optional bytes attach_data = 20;
   inline bool has_attach_data() const;
   inline void clear_attach_data();
@@ -185,6 +207,12 @@ class IMMsgData : public ::google::protobuf::MessageLite {
   inline void clear_has_msg_type();
   inline void set_has_msg_data();
   inline void clear_has_msg_data();
+  inline void set_has_user_id();
+  inline void clear_has_user_id();
+  inline void set_has_read_count();
+  inline void clear_has_read_count();
+  inline void set_has_unread_count();
+  inline void clear_has_unread_count();
   inline void set_has_attach_data();
   inline void clear_has_attach_data();
 
@@ -197,8 +225,11 @@ class IMMsgData : public ::google::protobuf::MessageLite {
   ::google::protobuf::uint32 msg_id_;
   ::google::protobuf::uint32 create_time_;
   ::std::string* msg_data_;
-  ::std::string* attach_data_;
   int msg_type_;
+  ::google::protobuf::uint32 user_id_;
+  ::google::protobuf::uint32 read_count_;
+  ::google::protobuf::uint32 unread_count_;
+  ::std::string* attach_data_;
   #ifdef GOOGLE_PROTOBUF_NO_STATIC_INITIALIZER
   friend void  protobuf_AddDesc_IM_2eMessage_2eproto_impl();
   #else
@@ -543,6 +574,32 @@ class IMMsgDataReadNotify : public ::google::protobuf::MessageLite {
   inline ::IM::BaseDefine::SessionType session_type() const;
   inline void set_session_type(::IM::BaseDefine::SessionType value);
 
+  // optional uint32 msg_read_count = 5;
+  inline bool has_msg_read_count() const;
+  inline void clear_msg_read_count();
+  static const int kMsgReadCountFieldNumber = 5;
+  inline ::google::protobuf::uint32 msg_read_count() const;
+  inline void set_msg_read_count(::google::protobuf::uint32 value);
+
+  // optional uint32 msg_unread_count = 6;
+  inline bool has_msg_unread_count() const;
+  inline void clear_msg_unread_count();
+  static const int kMsgUnreadCountFieldNumber = 6;
+  inline ::google::protobuf::uint32 msg_unread_count() const;
+  inline void set_msg_unread_count(::google::protobuf::uint32 value);
+
+  // repeated uint32 group_member_list = 7;
+  inline int group_member_list_size() const;
+  inline void clear_group_member_list();
+  static const int kGroupMemberListFieldNumber = 7;
+  inline ::google::protobuf::uint32 group_member_list(int index) const;
+  inline void set_group_member_list(int index, ::google::protobuf::uint32 value);
+  inline void add_group_member_list(::google::protobuf::uint32 value);
+  inline const ::google::protobuf::RepeatedField< ::google::protobuf::uint32 >&
+      group_member_list() const;
+  inline ::google::protobuf::RepeatedField< ::google::protobuf::uint32 >*
+      mutable_group_member_list();
+
   // @@protoc_insertion_point(class_scope:IM.Message.IMMsgDataReadNotify)
  private:
   inline void set_has_user_id();
@@ -553,6 +610,10 @@ class IMMsgDataReadNotify : public ::google::protobuf::MessageLite {
   inline void clear_has_msg_id();
   inline void set_has_session_type();
   inline void clear_has_session_type();
+  inline void set_has_msg_read_count();
+  inline void clear_has_msg_read_count();
+  inline void set_has_msg_unread_count();
+  inline void clear_has_msg_unread_count();
 
   ::std::string _unknown_fields_;
 
@@ -562,6 +623,9 @@ class IMMsgDataReadNotify : public ::google::protobuf::MessageLite {
   ::google::protobuf::uint32 session_id_;
   ::google::protobuf::uint32 msg_id_;
   int session_type_;
+  ::google::protobuf::uint32 msg_read_count_;
+  ::google::protobuf::uint32 msg_unread_count_;
+  ::google::protobuf::RepeatedField< ::google::protobuf::uint32 > group_member_list_;
   #ifdef GOOGLE_PROTOBUF_NO_STATIC_INITIALIZER
   friend void  protobuf_AddDesc_IM_2eMessage_2eproto_impl();
   #else
@@ -1815,6 +1879,152 @@ class IMGetMsgByIdRsp : public ::google::protobuf::MessageLite {
   void InitAsDefaultInstance();
   static IMGetMsgByIdRsp* default_instance_;
 };
+// -------------------------------------------------------------------
+
+class IMMsgDataUpdate : public ::google::protobuf::MessageLite {
+ public:
+  IMMsgDataUpdate();
+  virtual ~IMMsgDataUpdate();
+
+  IMMsgDataUpdate(const IMMsgDataUpdate& from);
+
+  inline IMMsgDataUpdate& operator=(const IMMsgDataUpdate& from) {
+    CopyFrom(from);
+    return *this;
+  }
+
+  inline const ::std::string& unknown_fields() const {
+    return _unknown_fields_;
+  }
+
+  inline ::std::string* mutable_unknown_fields() {
+    return &_unknown_fields_;
+  }
+
+  static const IMMsgDataUpdate& default_instance();
+
+  #ifdef GOOGLE_PROTOBUF_NO_STATIC_INITIALIZER
+  // Returns the internal default instance pointer. This function can
+  // return NULL thus should not be used by the user. This is intended
+  // for Protobuf internal code. Please use default_instance() declared
+  // above instead.
+  static inline const IMMsgDataUpdate* internal_default_instance() {
+    return default_instance_;
+  }
+  #endif
+
+  void Swap(IMMsgDataUpdate* other);
+
+  // implements Message ----------------------------------------------
+
+  IMMsgDataUpdate* New() const;
+  void CheckTypeAndMergeFrom(const ::google::protobuf::MessageLite& from);
+  void CopyFrom(const IMMsgDataUpdate& from);
+  void MergeFrom(const IMMsgDataUpdate& from);
+  void Clear();
+  bool IsInitialized() const;
+
+  int ByteSize() const;
+  bool MergePartialFromCodedStream(
+      ::google::protobuf::io::CodedInputStream* input);
+  void SerializeWithCachedSizes(
+      ::google::protobuf::io::CodedOutputStream* output) const;
+  void DiscardUnknownFields();
+  int GetCachedSize() const { return _cached_size_; }
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const;
+  public:
+  ::std::string GetTypeName() const;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  // required uint32 user_id = 1;
+  inline bool has_user_id() const;
+  inline void clear_user_id();
+  static const int kUserIdFieldNumber = 1;
+  inline ::google::protobuf::uint32 user_id() const;
+  inline void set_user_id(::google::protobuf::uint32 value);
+
+  // required uint32 session_id = 2;
+  inline bool has_session_id() const;
+  inline void clear_session_id();
+  static const int kSessionIdFieldNumber = 2;
+  inline ::google::protobuf::uint32 session_id() const;
+  inline void set_session_id(::google::protobuf::uint32 value);
+
+  // required uint32 msg_id = 3;
+  inline bool has_msg_id() const;
+  inline void clear_msg_id();
+  static const int kMsgIdFieldNumber = 3;
+  inline ::google::protobuf::uint32 msg_id() const;
+  inline void set_msg_id(::google::protobuf::uint32 value);
+
+  // required .IM.BaseDefine.SessionType session_type = 4;
+  inline bool has_session_type() const;
+  inline void clear_session_type();
+  static const int kSessionTypeFieldNumber = 4;
+  inline ::IM::BaseDefine::SessionType session_type() const;
+  inline void set_session_type(::IM::BaseDefine::SessionType value);
+
+  // optional uint32 result_code = 5;
+  inline bool has_result_code() const;
+  inline void clear_result_code();
+  static const int kResultCodeFieldNumber = 5;
+  inline ::google::protobuf::uint32 result_code() const;
+  inline void set_result_code(::google::protobuf::uint32 value);
+
+  // optional bytes attach_data = 20;
+  inline bool has_attach_data() const;
+  inline void clear_attach_data();
+  static const int kAttachDataFieldNumber = 20;
+  inline const ::std::string& attach_data() const;
+  inline void set_attach_data(const ::std::string& value);
+  inline void set_attach_data(const char* value);
+  inline void set_attach_data(const void* value, size_t size);
+  inline ::std::string* mutable_attach_data();
+  inline ::std::string* release_attach_data();
+  inline void set_allocated_attach_data(::std::string* attach_data);
+
+  // @@protoc_insertion_point(class_scope:IM.Message.IMMsgDataUpdate)
+ private:
+  inline void set_has_user_id();
+  inline void clear_has_user_id();
+  inline void set_has_session_id();
+  inline void clear_has_session_id();
+  inline void set_has_msg_id();
+  inline void clear_has_msg_id();
+  inline void set_has_session_type();
+  inline void clear_has_session_type();
+  inline void set_has_result_code();
+  inline void clear_has_result_code();
+  inline void set_has_attach_data();
+  inline void clear_has_attach_data();
+
+  ::std::string _unknown_fields_;
+
+  ::google::protobuf::uint32 _has_bits_[1];
+  mutable int _cached_size_;
+  ::google::protobuf::uint32 user_id_;
+  ::google::protobuf::uint32 session_id_;
+  ::google::protobuf::uint32 msg_id_;
+  int session_type_;
+  ::std::string* attach_data_;
+  ::google::protobuf::uint32 result_code_;
+  #ifdef GOOGLE_PROTOBUF_NO_STATIC_INITIALIZER
+  friend void  protobuf_AddDesc_IM_2eMessage_2eproto_impl();
+  #else
+  friend void  protobuf_AddDesc_IM_2eMessage_2eproto();
+  #endif
+  friend void protobuf_AssignDesc_IM_2eMessage_2eproto();
+  friend void protobuf_ShutdownFile_IM_2eMessage_2eproto();
+
+  void InitAsDefaultInstance();
+  static IMMsgDataUpdate* default_instance_;
+};
 // ===================================================================
 
 
@@ -2019,15 +2229,87 @@ inline void IMMsgData::set_allocated_msg_data(::std::string* msg_data) {
   // @@protoc_insertion_point(field_set_allocated:IM.Message.IMMsgData.msg_data)
 }
 
-// optional bytes attach_data = 20;
-inline bool IMMsgData::has_attach_data() const {
+// optional uint32 user_id = 7;
+inline bool IMMsgData::has_user_id() const {
   return (_has_bits_[0] & 0x00000040u) != 0;
 }
-inline void IMMsgData::set_has_attach_data() {
+inline void IMMsgData::set_has_user_id() {
   _has_bits_[0] |= 0x00000040u;
 }
-inline void IMMsgData::clear_has_attach_data() {
+inline void IMMsgData::clear_has_user_id() {
   _has_bits_[0] &= ~0x00000040u;
+}
+inline void IMMsgData::clear_user_id() {
+  user_id_ = 0u;
+  clear_has_user_id();
+}
+inline ::google::protobuf::uint32 IMMsgData::user_id() const {
+  // @@protoc_insertion_point(field_get:IM.Message.IMMsgData.user_id)
+  return user_id_;
+}
+inline void IMMsgData::set_user_id(::google::protobuf::uint32 value) {
+  set_has_user_id();
+  user_id_ = value;
+  // @@protoc_insertion_point(field_set:IM.Message.IMMsgData.user_id)
+}
+
+// optional uint32 read_count = 8;
+inline bool IMMsgData::has_read_count() const {
+  return (_has_bits_[0] & 0x00000080u) != 0;
+}
+inline void IMMsgData::set_has_read_count() {
+  _has_bits_[0] |= 0x00000080u;
+}
+inline void IMMsgData::clear_has_read_count() {
+  _has_bits_[0] &= ~0x00000080u;
+}
+inline void IMMsgData::clear_read_count() {
+  read_count_ = 0u;
+  clear_has_read_count();
+}
+inline ::google::protobuf::uint32 IMMsgData::read_count() const {
+  // @@protoc_insertion_point(field_get:IM.Message.IMMsgData.read_count)
+  return read_count_;
+}
+inline void IMMsgData::set_read_count(::google::protobuf::uint32 value) {
+  set_has_read_count();
+  read_count_ = value;
+  // @@protoc_insertion_point(field_set:IM.Message.IMMsgData.read_count)
+}
+
+// optional uint32 unread_count = 9;
+inline bool IMMsgData::has_unread_count() const {
+  return (_has_bits_[0] & 0x00000100u) != 0;
+}
+inline void IMMsgData::set_has_unread_count() {
+  _has_bits_[0] |= 0x00000100u;
+}
+inline void IMMsgData::clear_has_unread_count() {
+  _has_bits_[0] &= ~0x00000100u;
+}
+inline void IMMsgData::clear_unread_count() {
+  unread_count_ = 0u;
+  clear_has_unread_count();
+}
+inline ::google::protobuf::uint32 IMMsgData::unread_count() const {
+  // @@protoc_insertion_point(field_get:IM.Message.IMMsgData.unread_count)
+  return unread_count_;
+}
+inline void IMMsgData::set_unread_count(::google::protobuf::uint32 value) {
+  set_has_unread_count();
+  unread_count_ = value;
+  // @@protoc_insertion_point(field_set:IM.Message.IMMsgData.unread_count)
+}
+
+// optional bytes attach_data = 20;
+inline bool IMMsgData::has_attach_data() const {
+  return (_has_bits_[0] & 0x00000200u) != 0;
+}
+inline void IMMsgData::set_has_attach_data() {
+  _has_bits_[0] |= 0x00000200u;
+}
+inline void IMMsgData::clear_has_attach_data() {
+  _has_bits_[0] &= ~0x00000200u;
 }
 inline void IMMsgData::clear_attach_data() {
   if (attach_data_ != &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
@@ -2396,6 +2678,84 @@ inline void IMMsgDataReadNotify::set_session_type(::IM::BaseDefine::SessionType 
   set_has_session_type();
   session_type_ = value;
   // @@protoc_insertion_point(field_set:IM.Message.IMMsgDataReadNotify.session_type)
+}
+
+// optional uint32 msg_read_count = 5;
+inline bool IMMsgDataReadNotify::has_msg_read_count() const {
+  return (_has_bits_[0] & 0x00000010u) != 0;
+}
+inline void IMMsgDataReadNotify::set_has_msg_read_count() {
+  _has_bits_[0] |= 0x00000010u;
+}
+inline void IMMsgDataReadNotify::clear_has_msg_read_count() {
+  _has_bits_[0] &= ~0x00000010u;
+}
+inline void IMMsgDataReadNotify::clear_msg_read_count() {
+  msg_read_count_ = 0u;
+  clear_has_msg_read_count();
+}
+inline ::google::protobuf::uint32 IMMsgDataReadNotify::msg_read_count() const {
+  // @@protoc_insertion_point(field_get:IM.Message.IMMsgDataReadNotify.msg_read_count)
+  return msg_read_count_;
+}
+inline void IMMsgDataReadNotify::set_msg_read_count(::google::protobuf::uint32 value) {
+  set_has_msg_read_count();
+  msg_read_count_ = value;
+  // @@protoc_insertion_point(field_set:IM.Message.IMMsgDataReadNotify.msg_read_count)
+}
+
+// optional uint32 msg_unread_count = 6;
+inline bool IMMsgDataReadNotify::has_msg_unread_count() const {
+  return (_has_bits_[0] & 0x00000020u) != 0;
+}
+inline void IMMsgDataReadNotify::set_has_msg_unread_count() {
+  _has_bits_[0] |= 0x00000020u;
+}
+inline void IMMsgDataReadNotify::clear_has_msg_unread_count() {
+  _has_bits_[0] &= ~0x00000020u;
+}
+inline void IMMsgDataReadNotify::clear_msg_unread_count() {
+  msg_unread_count_ = 0u;
+  clear_has_msg_unread_count();
+}
+inline ::google::protobuf::uint32 IMMsgDataReadNotify::msg_unread_count() const {
+  // @@protoc_insertion_point(field_get:IM.Message.IMMsgDataReadNotify.msg_unread_count)
+  return msg_unread_count_;
+}
+inline void IMMsgDataReadNotify::set_msg_unread_count(::google::protobuf::uint32 value) {
+  set_has_msg_unread_count();
+  msg_unread_count_ = value;
+  // @@protoc_insertion_point(field_set:IM.Message.IMMsgDataReadNotify.msg_unread_count)
+}
+
+// repeated uint32 group_member_list = 7;
+inline int IMMsgDataReadNotify::group_member_list_size() const {
+  return group_member_list_.size();
+}
+inline void IMMsgDataReadNotify::clear_group_member_list() {
+  group_member_list_.Clear();
+}
+inline ::google::protobuf::uint32 IMMsgDataReadNotify::group_member_list(int index) const {
+  // @@protoc_insertion_point(field_get:IM.Message.IMMsgDataReadNotify.group_member_list)
+  return group_member_list_.Get(index);
+}
+inline void IMMsgDataReadNotify::set_group_member_list(int index, ::google::protobuf::uint32 value) {
+  group_member_list_.Set(index, value);
+  // @@protoc_insertion_point(field_set:IM.Message.IMMsgDataReadNotify.group_member_list)
+}
+inline void IMMsgDataReadNotify::add_group_member_list(::google::protobuf::uint32 value) {
+  group_member_list_.Add(value);
+  // @@protoc_insertion_point(field_add:IM.Message.IMMsgDataReadNotify.group_member_list)
+}
+inline const ::google::protobuf::RepeatedField< ::google::protobuf::uint32 >&
+IMMsgDataReadNotify::group_member_list() const {
+  // @@protoc_insertion_point(field_list:IM.Message.IMMsgDataReadNotify.group_member_list)
+  return group_member_list_;
+}
+inline ::google::protobuf::RepeatedField< ::google::protobuf::uint32 >*
+IMMsgDataReadNotify::mutable_group_member_list() {
+  // @@protoc_insertion_point(field_mutable_list:IM.Message.IMMsgDataReadNotify.group_member_list)
+  return &group_member_list_;
 }
 
 // -------------------------------------------------------------------
@@ -3794,6 +4154,207 @@ inline void IMGetMsgByIdRsp::set_allocated_attach_data(::std::string* attach_dat
     attach_data_ = const_cast< ::std::string*>(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   }
   // @@protoc_insertion_point(field_set_allocated:IM.Message.IMGetMsgByIdRsp.attach_data)
+}
+
+// -------------------------------------------------------------------
+
+// IMMsgDataUpdate
+
+// required uint32 user_id = 1;
+inline bool IMMsgDataUpdate::has_user_id() const {
+  return (_has_bits_[0] & 0x00000001u) != 0;
+}
+inline void IMMsgDataUpdate::set_has_user_id() {
+  _has_bits_[0] |= 0x00000001u;
+}
+inline void IMMsgDataUpdate::clear_has_user_id() {
+  _has_bits_[0] &= ~0x00000001u;
+}
+inline void IMMsgDataUpdate::clear_user_id() {
+  user_id_ = 0u;
+  clear_has_user_id();
+}
+inline ::google::protobuf::uint32 IMMsgDataUpdate::user_id() const {
+  // @@protoc_insertion_point(field_get:IM.Message.IMMsgDataUpdate.user_id)
+  return user_id_;
+}
+inline void IMMsgDataUpdate::set_user_id(::google::protobuf::uint32 value) {
+  set_has_user_id();
+  user_id_ = value;
+  // @@protoc_insertion_point(field_set:IM.Message.IMMsgDataUpdate.user_id)
+}
+
+// required uint32 session_id = 2;
+inline bool IMMsgDataUpdate::has_session_id() const {
+  return (_has_bits_[0] & 0x00000002u) != 0;
+}
+inline void IMMsgDataUpdate::set_has_session_id() {
+  _has_bits_[0] |= 0x00000002u;
+}
+inline void IMMsgDataUpdate::clear_has_session_id() {
+  _has_bits_[0] &= ~0x00000002u;
+}
+inline void IMMsgDataUpdate::clear_session_id() {
+  session_id_ = 0u;
+  clear_has_session_id();
+}
+inline ::google::protobuf::uint32 IMMsgDataUpdate::session_id() const {
+  // @@protoc_insertion_point(field_get:IM.Message.IMMsgDataUpdate.session_id)
+  return session_id_;
+}
+inline void IMMsgDataUpdate::set_session_id(::google::protobuf::uint32 value) {
+  set_has_session_id();
+  session_id_ = value;
+  // @@protoc_insertion_point(field_set:IM.Message.IMMsgDataUpdate.session_id)
+}
+
+// required uint32 msg_id = 3;
+inline bool IMMsgDataUpdate::has_msg_id() const {
+  return (_has_bits_[0] & 0x00000004u) != 0;
+}
+inline void IMMsgDataUpdate::set_has_msg_id() {
+  _has_bits_[0] |= 0x00000004u;
+}
+inline void IMMsgDataUpdate::clear_has_msg_id() {
+  _has_bits_[0] &= ~0x00000004u;
+}
+inline void IMMsgDataUpdate::clear_msg_id() {
+  msg_id_ = 0u;
+  clear_has_msg_id();
+}
+inline ::google::protobuf::uint32 IMMsgDataUpdate::msg_id() const {
+  // @@protoc_insertion_point(field_get:IM.Message.IMMsgDataUpdate.msg_id)
+  return msg_id_;
+}
+inline void IMMsgDataUpdate::set_msg_id(::google::protobuf::uint32 value) {
+  set_has_msg_id();
+  msg_id_ = value;
+  // @@protoc_insertion_point(field_set:IM.Message.IMMsgDataUpdate.msg_id)
+}
+
+// required .IM.BaseDefine.SessionType session_type = 4;
+inline bool IMMsgDataUpdate::has_session_type() const {
+  return (_has_bits_[0] & 0x00000008u) != 0;
+}
+inline void IMMsgDataUpdate::set_has_session_type() {
+  _has_bits_[0] |= 0x00000008u;
+}
+inline void IMMsgDataUpdate::clear_has_session_type() {
+  _has_bits_[0] &= ~0x00000008u;
+}
+inline void IMMsgDataUpdate::clear_session_type() {
+  session_type_ = 1;
+  clear_has_session_type();
+}
+inline ::IM::BaseDefine::SessionType IMMsgDataUpdate::session_type() const {
+  // @@protoc_insertion_point(field_get:IM.Message.IMMsgDataUpdate.session_type)
+  return static_cast< ::IM::BaseDefine::SessionType >(session_type_);
+}
+inline void IMMsgDataUpdate::set_session_type(::IM::BaseDefine::SessionType value) {
+  assert(::IM::BaseDefine::SessionType_IsValid(value));
+  set_has_session_type();
+  session_type_ = value;
+  // @@protoc_insertion_point(field_set:IM.Message.IMMsgDataUpdate.session_type)
+}
+
+// optional uint32 result_code = 5;
+inline bool IMMsgDataUpdate::has_result_code() const {
+  return (_has_bits_[0] & 0x00000010u) != 0;
+}
+inline void IMMsgDataUpdate::set_has_result_code() {
+  _has_bits_[0] |= 0x00000010u;
+}
+inline void IMMsgDataUpdate::clear_has_result_code() {
+  _has_bits_[0] &= ~0x00000010u;
+}
+inline void IMMsgDataUpdate::clear_result_code() {
+  result_code_ = 0u;
+  clear_has_result_code();
+}
+inline ::google::protobuf::uint32 IMMsgDataUpdate::result_code() const {
+  // @@protoc_insertion_point(field_get:IM.Message.IMMsgDataUpdate.result_code)
+  return result_code_;
+}
+inline void IMMsgDataUpdate::set_result_code(::google::protobuf::uint32 value) {
+  set_has_result_code();
+  result_code_ = value;
+  // @@protoc_insertion_point(field_set:IM.Message.IMMsgDataUpdate.result_code)
+}
+
+// optional bytes attach_data = 20;
+inline bool IMMsgDataUpdate::has_attach_data() const {
+  return (_has_bits_[0] & 0x00000020u) != 0;
+}
+inline void IMMsgDataUpdate::set_has_attach_data() {
+  _has_bits_[0] |= 0x00000020u;
+}
+inline void IMMsgDataUpdate::clear_has_attach_data() {
+  _has_bits_[0] &= ~0x00000020u;
+}
+inline void IMMsgDataUpdate::clear_attach_data() {
+  if (attach_data_ != &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
+    attach_data_->clear();
+  }
+  clear_has_attach_data();
+}
+inline const ::std::string& IMMsgDataUpdate::attach_data() const {
+  // @@protoc_insertion_point(field_get:IM.Message.IMMsgDataUpdate.attach_data)
+  return *attach_data_;
+}
+inline void IMMsgDataUpdate::set_attach_data(const ::std::string& value) {
+  set_has_attach_data();
+  if (attach_data_ == &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
+    attach_data_ = new ::std::string;
+  }
+  attach_data_->assign(value);
+  // @@protoc_insertion_point(field_set:IM.Message.IMMsgDataUpdate.attach_data)
+}
+inline void IMMsgDataUpdate::set_attach_data(const char* value) {
+  set_has_attach_data();
+  if (attach_data_ == &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
+    attach_data_ = new ::std::string;
+  }
+  attach_data_->assign(value);
+  // @@protoc_insertion_point(field_set_char:IM.Message.IMMsgDataUpdate.attach_data)
+}
+inline void IMMsgDataUpdate::set_attach_data(const void* value, size_t size) {
+  set_has_attach_data();
+  if (attach_data_ == &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
+    attach_data_ = new ::std::string;
+  }
+  attach_data_->assign(reinterpret_cast<const char*>(value), size);
+  // @@protoc_insertion_point(field_set_pointer:IM.Message.IMMsgDataUpdate.attach_data)
+}
+inline ::std::string* IMMsgDataUpdate::mutable_attach_data() {
+  set_has_attach_data();
+  if (attach_data_ == &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
+    attach_data_ = new ::std::string;
+  }
+  // @@protoc_insertion_point(field_mutable:IM.Message.IMMsgDataUpdate.attach_data)
+  return attach_data_;
+}
+inline ::std::string* IMMsgDataUpdate::release_attach_data() {
+  clear_has_attach_data();
+  if (attach_data_ == &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
+    return NULL;
+  } else {
+    ::std::string* temp = attach_data_;
+    attach_data_ = const_cast< ::std::string*>(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+    return temp;
+  }
+}
+inline void IMMsgDataUpdate::set_allocated_attach_data(::std::string* attach_data) {
+  if (attach_data_ != &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
+    delete attach_data_;
+  }
+  if (attach_data) {
+    set_has_attach_data();
+    attach_data_ = attach_data;
+  } else {
+    clear_has_attach_data();
+    attach_data_ = const_cast< ::std::string*>(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  }
+  // @@protoc_insertion_point(field_set_allocated:IM.Message.IMMsgDataUpdate.attach_data)
 }
 
 

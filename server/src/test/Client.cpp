@@ -52,6 +52,7 @@ void CClient::connect()
     string strUrl = m_strLoginDomain + "/msg_server";
     string strResp;
     CURLcode nRet = httpClient.Get(strUrl, strResp);
+	printf("strurl======[%s]\n",strUrl.c_str());
     if(nRet != CURLE_OK)
     {
         printf("login falied. access url:%s error\n", strUrl.c_str());
@@ -78,8 +79,11 @@ void CClient::connect()
             return;
         }
         strPriorIp = value["priorIP"].asString();
-        strBackupIp = value["backupIp"].asString();
-        nPort = value["port"].asUInt();
+		printf("strPriorIp=======[%s]\n",strPriorIp.c_str());
+        strBackupIp = value["backupIP"].asString();
+		printf("strBackupIp=======[%s]\n",strBackupIp.c_str());
+        nPort = 8000;
+		printf("nPort=======[%d]\n",nPort);
         
     } catch (std::runtime_error msg) {
         printf("login falied. get json error:%s\n", strResp.c_str());
@@ -88,7 +92,7 @@ void CClient::connect()
     }
     
     g_pConn = new ClientConn();
-    m_nHandle = g_pConn->connect(strPriorIp.c_str(), nPort, m_strName, m_strPass);
+    m_nHandle = g_pConn->connect("172.17.71.189", nPort, m_strName, m_strPass);
     if(m_nHandle != INVALID_SOCKET)
     {
         netlib_register_timer(CClient::TimerCallback, NULL, 1000);
@@ -122,6 +126,7 @@ uint32_t CClient::login(const string& strName, const string& strPass)
 
 void CClient::onLogin(uint32_t nSeqNo, uint32_t nResultCode, string& strMsg, IM::BaseDefine::UserInfo* pUser)
 {
+	printf("login is onLogin nResultCode=[%d]\n",nResultCode);
     if(nResultCode != 0)
     {
         printf("login failed.errorCode=%u, msg=%s\n",nResultCode, strMsg.c_str());
@@ -195,6 +200,21 @@ uint32_t CClient::sendMsg(uint32_t nToId, IM::BaseDefine::MsgType nType, const s
     uint32_t nFromId = m_cSelfInfo.user_id();
     return g_pConn->sendMessage(nFromId, nToId, nType, strMsg);
 }
+
+uint32_t CClient::addCollect(uint32_t nToId, IM::BaseDefine::MsgType nType, const string &strMsg)
+{
+    uint32_t nFromId = 10;
+	log("addCollect fromId=[%d]",nFromId);
+    return g_pConn->addCollect(nFromId, nToId, nType, strMsg);
+}
+
+uint32_t CClient::getCollect()
+{
+    uint32_t nFromId = 10;
+	log("addCollect fromId=[%d]",nFromId);
+    return g_pConn->getCollectList(10, IM::BaseDefine::SessionType::SESSION_TYPE_SINGLE, 0, 10);
+}
+
 
 void CClient::onSendMsg(uint32_t nSeqNo, uint32_t nSendId, uint32_t nRecvId, IM::BaseDefine::SessionType nType, uint32_t nMsgId)
 {

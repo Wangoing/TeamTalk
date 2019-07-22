@@ -38,6 +38,8 @@ class IMNormalGroupListReq;
 class IMNormalGroupListRsp;
 class IMGroupInfoListReq;
 class IMGroupInfoListRsp;
+class IMGroupChangeReq;
+class IMGroupChangeRsp;
 class IMGroupCreateReq;
 class IMGroupCreateRsp;
 class IMGroupChangeMemberReq;
@@ -508,6 +510,418 @@ class IMGroupInfoListRsp : public ::google::protobuf::MessageLite {
 
   void InitAsDefaultInstance();
   static IMGroupInfoListRsp* default_instance_;
+};
+// -------------------------------------------------------------------
+
+class IMGroupChangeReq : public ::google::protobuf::MessageLite {
+ public:
+  IMGroupChangeReq();
+  virtual ~IMGroupChangeReq();
+
+  IMGroupChangeReq(const IMGroupChangeReq& from);
+
+  inline IMGroupChangeReq& operator=(const IMGroupChangeReq& from) {
+    CopyFrom(from);
+    return *this;
+  }
+
+  inline const ::std::string& unknown_fields() const {
+    return _unknown_fields_;
+  }
+
+  inline ::std::string* mutable_unknown_fields() {
+    return &_unknown_fields_;
+  }
+
+  static const IMGroupChangeReq& default_instance();
+
+  #ifdef GOOGLE_PROTOBUF_NO_STATIC_INITIALIZER
+  // Returns the internal default instance pointer. This function can
+  // return NULL thus should not be used by the user. This is intended
+  // for Protobuf internal code. Please use default_instance() declared
+  // above instead.
+  static inline const IMGroupChangeReq* internal_default_instance() {
+    return default_instance_;
+  }
+  #endif
+
+  void Swap(IMGroupChangeReq* other);
+
+  // implements Message ----------------------------------------------
+
+  IMGroupChangeReq* New() const;
+  void CheckTypeAndMergeFrom(const ::google::protobuf::MessageLite& from);
+  void CopyFrom(const IMGroupChangeReq& from);
+  void MergeFrom(const IMGroupChangeReq& from);
+  void Clear();
+  bool IsInitialized() const;
+
+  int ByteSize() const;
+  bool MergePartialFromCodedStream(
+      ::google::protobuf::io::CodedInputStream* input);
+  void SerializeWithCachedSizes(
+      ::google::protobuf::io::CodedOutputStream* output) const;
+  void DiscardUnknownFields();
+  int GetCachedSize() const { return _cached_size_; }
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const;
+  public:
+  ::std::string GetTypeName() const;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  // required uint32 user_id = 1;
+  inline bool has_user_id() const;
+  inline void clear_user_id();
+  static const int kUserIdFieldNumber = 1;
+  inline ::google::protobuf::uint32 user_id() const;
+  inline void set_user_id(::google::protobuf::uint32 value);
+
+  // required uint32 group_id = 2;
+  inline bool has_group_id() const;
+  inline void clear_group_id();
+  static const int kGroupIdFieldNumber = 2;
+  inline ::google::protobuf::uint32 group_id() const;
+  inline void set_group_id(::google::protobuf::uint32 value);
+
+  // required string group_name = 3;
+  inline bool has_group_name() const;
+  inline void clear_group_name();
+  static const int kGroupNameFieldNumber = 3;
+  inline const ::std::string& group_name() const;
+  inline void set_group_name(const ::std::string& value);
+  inline void set_group_name(const char* value);
+  inline void set_group_name(const char* value, size_t size);
+  inline ::std::string* mutable_group_name();
+  inline ::std::string* release_group_name();
+  inline void set_allocated_group_name(::std::string* group_name);
+
+  // required string group_avatar = 4;
+  inline bool has_group_avatar() const;
+  inline void clear_group_avatar();
+  static const int kGroupAvatarFieldNumber = 4;
+  inline const ::std::string& group_avatar() const;
+  inline void set_group_avatar(const ::std::string& value);
+  inline void set_group_avatar(const char* value);
+  inline void set_group_avatar(const char* value, size_t size);
+  inline ::std::string* mutable_group_avatar();
+  inline ::std::string* release_group_avatar();
+  inline void set_allocated_group_avatar(::std::string* group_avatar);
+
+  // required .IM.BaseDefine.GroupJoinType group_join_type = 5;
+  inline bool has_group_join_type() const;
+  inline void clear_group_join_type();
+  static const int kGroupJoinTypeFieldNumber = 5;
+  inline ::IM::BaseDefine::GroupJoinType group_join_type() const;
+  inline void set_group_join_type(::IM::BaseDefine::GroupJoinType value);
+
+  // required .IM.BaseDefine.GroupJoinCheckType group_join_check_type = 6;
+  inline bool has_group_join_check_type() const;
+  inline void clear_group_join_check_type();
+  static const int kGroupJoinCheckTypeFieldNumber = 6;
+  inline ::IM::BaseDefine::GroupJoinCheckType group_join_check_type() const;
+  inline void set_group_join_check_type(::IM::BaseDefine::GroupJoinCheckType value);
+
+  // required .IM.BaseDefine.GroupUpdateType group_update_type = 7;
+  inline bool has_group_update_type() const;
+  inline void clear_group_update_type();
+  static const int kGroupUpdateTypeFieldNumber = 7;
+  inline ::IM::BaseDefine::GroupUpdateType group_update_type() const;
+  inline void set_group_update_type(::IM::BaseDefine::GroupUpdateType value);
+
+  // required uint32 version = 8;
+  inline bool has_version() const;
+  inline void clear_version();
+  static const int kVersionFieldNumber = 8;
+  inline ::google::protobuf::uint32 version() const;
+  inline void set_version(::google::protobuf::uint32 value);
+
+  // required string group_notice = 9;
+  inline bool has_group_notice() const;
+  inline void clear_group_notice();
+  static const int kGroupNoticeFieldNumber = 9;
+  inline const ::std::string& group_notice() const;
+  inline void set_group_notice(const ::std::string& value);
+  inline void set_group_notice(const char* value);
+  inline void set_group_notice(const char* value, size_t size);
+  inline ::std::string* mutable_group_notice();
+  inline ::std::string* release_group_notice();
+  inline void set_allocated_group_notice(::std::string* group_notice);
+
+  // optional bytes attach_data = 20;
+  inline bool has_attach_data() const;
+  inline void clear_attach_data();
+  static const int kAttachDataFieldNumber = 20;
+  inline const ::std::string& attach_data() const;
+  inline void set_attach_data(const ::std::string& value);
+  inline void set_attach_data(const char* value);
+  inline void set_attach_data(const void* value, size_t size);
+  inline ::std::string* mutable_attach_data();
+  inline ::std::string* release_attach_data();
+  inline void set_allocated_attach_data(::std::string* attach_data);
+
+  // @@protoc_insertion_point(class_scope:IM.Group.IMGroupChangeReq)
+ private:
+  inline void set_has_user_id();
+  inline void clear_has_user_id();
+  inline void set_has_group_id();
+  inline void clear_has_group_id();
+  inline void set_has_group_name();
+  inline void clear_has_group_name();
+  inline void set_has_group_avatar();
+  inline void clear_has_group_avatar();
+  inline void set_has_group_join_type();
+  inline void clear_has_group_join_type();
+  inline void set_has_group_join_check_type();
+  inline void clear_has_group_join_check_type();
+  inline void set_has_group_update_type();
+  inline void clear_has_group_update_type();
+  inline void set_has_version();
+  inline void clear_has_version();
+  inline void set_has_group_notice();
+  inline void clear_has_group_notice();
+  inline void set_has_attach_data();
+  inline void clear_has_attach_data();
+
+  ::std::string _unknown_fields_;
+
+  ::google::protobuf::uint32 _has_bits_[1];
+  mutable int _cached_size_;
+  ::google::protobuf::uint32 user_id_;
+  ::google::protobuf::uint32 group_id_;
+  ::std::string* group_name_;
+  ::std::string* group_avatar_;
+  int group_join_type_;
+  int group_join_check_type_;
+  int group_update_type_;
+  ::google::protobuf::uint32 version_;
+  ::std::string* group_notice_;
+  ::std::string* attach_data_;
+  #ifdef GOOGLE_PROTOBUF_NO_STATIC_INITIALIZER
+  friend void  protobuf_AddDesc_IM_2eGroup_2eproto_impl();
+  #else
+  friend void  protobuf_AddDesc_IM_2eGroup_2eproto();
+  #endif
+  friend void protobuf_AssignDesc_IM_2eGroup_2eproto();
+  friend void protobuf_ShutdownFile_IM_2eGroup_2eproto();
+
+  void InitAsDefaultInstance();
+  static IMGroupChangeReq* default_instance_;
+};
+// -------------------------------------------------------------------
+
+class IMGroupChangeRsp : public ::google::protobuf::MessageLite {
+ public:
+  IMGroupChangeRsp();
+  virtual ~IMGroupChangeRsp();
+
+  IMGroupChangeRsp(const IMGroupChangeRsp& from);
+
+  inline IMGroupChangeRsp& operator=(const IMGroupChangeRsp& from) {
+    CopyFrom(from);
+    return *this;
+  }
+
+  inline const ::std::string& unknown_fields() const {
+    return _unknown_fields_;
+  }
+
+  inline ::std::string* mutable_unknown_fields() {
+    return &_unknown_fields_;
+  }
+
+  static const IMGroupChangeRsp& default_instance();
+
+  #ifdef GOOGLE_PROTOBUF_NO_STATIC_INITIALIZER
+  // Returns the internal default instance pointer. This function can
+  // return NULL thus should not be used by the user. This is intended
+  // for Protobuf internal code. Please use default_instance() declared
+  // above instead.
+  static inline const IMGroupChangeRsp* internal_default_instance() {
+    return default_instance_;
+  }
+  #endif
+
+  void Swap(IMGroupChangeRsp* other);
+
+  // implements Message ----------------------------------------------
+
+  IMGroupChangeRsp* New() const;
+  void CheckTypeAndMergeFrom(const ::google::protobuf::MessageLite& from);
+  void CopyFrom(const IMGroupChangeRsp& from);
+  void MergeFrom(const IMGroupChangeRsp& from);
+  void Clear();
+  bool IsInitialized() const;
+
+  int ByteSize() const;
+  bool MergePartialFromCodedStream(
+      ::google::protobuf::io::CodedInputStream* input);
+  void SerializeWithCachedSizes(
+      ::google::protobuf::io::CodedOutputStream* output) const;
+  void DiscardUnknownFields();
+  int GetCachedSize() const { return _cached_size_; }
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const;
+  public:
+  ::std::string GetTypeName() const;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  // required uint32 user_id = 1;
+  inline bool has_user_id() const;
+  inline void clear_user_id();
+  static const int kUserIdFieldNumber = 1;
+  inline ::google::protobuf::uint32 user_id() const;
+  inline void set_user_id(::google::protobuf::uint32 value);
+
+  // required uint32 group_id = 2;
+  inline bool has_group_id() const;
+  inline void clear_group_id();
+  static const int kGroupIdFieldNumber = 2;
+  inline ::google::protobuf::uint32 group_id() const;
+  inline void set_group_id(::google::protobuf::uint32 value);
+
+  // required string group_name = 3;
+  inline bool has_group_name() const;
+  inline void clear_group_name();
+  static const int kGroupNameFieldNumber = 3;
+  inline const ::std::string& group_name() const;
+  inline void set_group_name(const ::std::string& value);
+  inline void set_group_name(const char* value);
+  inline void set_group_name(const char* value, size_t size);
+  inline ::std::string* mutable_group_name();
+  inline ::std::string* release_group_name();
+  inline void set_allocated_group_name(::std::string* group_name);
+
+  // required string group_avatar = 4;
+  inline bool has_group_avatar() const;
+  inline void clear_group_avatar();
+  static const int kGroupAvatarFieldNumber = 4;
+  inline const ::std::string& group_avatar() const;
+  inline void set_group_avatar(const ::std::string& value);
+  inline void set_group_avatar(const char* value);
+  inline void set_group_avatar(const char* value, size_t size);
+  inline ::std::string* mutable_group_avatar();
+  inline ::std::string* release_group_avatar();
+  inline void set_allocated_group_avatar(::std::string* group_avatar);
+
+  // required .IM.BaseDefine.GroupJoinType group_join_type = 5;
+  inline bool has_group_join_type() const;
+  inline void clear_group_join_type();
+  static const int kGroupJoinTypeFieldNumber = 5;
+  inline ::IM::BaseDefine::GroupJoinType group_join_type() const;
+  inline void set_group_join_type(::IM::BaseDefine::GroupJoinType value);
+
+  // required .IM.BaseDefine.GroupJoinCheckType group_join_check_type = 6;
+  inline bool has_group_join_check_type() const;
+  inline void clear_group_join_check_type();
+  static const int kGroupJoinCheckTypeFieldNumber = 6;
+  inline ::IM::BaseDefine::GroupJoinCheckType group_join_check_type() const;
+  inline void set_group_join_check_type(::IM::BaseDefine::GroupJoinCheckType value);
+
+  // required .IM.BaseDefine.GroupUpdateType group_update_type = 7;
+  inline bool has_group_update_type() const;
+  inline void clear_group_update_type();
+  static const int kGroupUpdateTypeFieldNumber = 7;
+  inline ::IM::BaseDefine::GroupUpdateType group_update_type() const;
+  inline void set_group_update_type(::IM::BaseDefine::GroupUpdateType value);
+
+  // required uint32 version = 8;
+  inline bool has_version() const;
+  inline void clear_version();
+  static const int kVersionFieldNumber = 8;
+  inline ::google::protobuf::uint32 version() const;
+  inline void set_version(::google::protobuf::uint32 value);
+
+  // required uint32 result_code = 9;
+  inline bool has_result_code() const;
+  inline void clear_result_code();
+  static const int kResultCodeFieldNumber = 9;
+  inline ::google::protobuf::uint32 result_code() const;
+  inline void set_result_code(::google::protobuf::uint32 value);
+
+  // required string group_notice = 10;
+  inline bool has_group_notice() const;
+  inline void clear_group_notice();
+  static const int kGroupNoticeFieldNumber = 10;
+  inline const ::std::string& group_notice() const;
+  inline void set_group_notice(const ::std::string& value);
+  inline void set_group_notice(const char* value);
+  inline void set_group_notice(const char* value, size_t size);
+  inline ::std::string* mutable_group_notice();
+  inline ::std::string* release_group_notice();
+  inline void set_allocated_group_notice(::std::string* group_notice);
+
+  // optional bytes attach_data = 20;
+  inline bool has_attach_data() const;
+  inline void clear_attach_data();
+  static const int kAttachDataFieldNumber = 20;
+  inline const ::std::string& attach_data() const;
+  inline void set_attach_data(const ::std::string& value);
+  inline void set_attach_data(const char* value);
+  inline void set_attach_data(const void* value, size_t size);
+  inline ::std::string* mutable_attach_data();
+  inline ::std::string* release_attach_data();
+  inline void set_allocated_attach_data(::std::string* attach_data);
+
+  // @@protoc_insertion_point(class_scope:IM.Group.IMGroupChangeRsp)
+ private:
+  inline void set_has_user_id();
+  inline void clear_has_user_id();
+  inline void set_has_group_id();
+  inline void clear_has_group_id();
+  inline void set_has_group_name();
+  inline void clear_has_group_name();
+  inline void set_has_group_avatar();
+  inline void clear_has_group_avatar();
+  inline void set_has_group_join_type();
+  inline void clear_has_group_join_type();
+  inline void set_has_group_join_check_type();
+  inline void clear_has_group_join_check_type();
+  inline void set_has_group_update_type();
+  inline void clear_has_group_update_type();
+  inline void set_has_version();
+  inline void clear_has_version();
+  inline void set_has_result_code();
+  inline void clear_has_result_code();
+  inline void set_has_group_notice();
+  inline void clear_has_group_notice();
+  inline void set_has_attach_data();
+  inline void clear_has_attach_data();
+
+  ::std::string _unknown_fields_;
+
+  ::google::protobuf::uint32 _has_bits_[1];
+  mutable int _cached_size_;
+  ::google::protobuf::uint32 user_id_;
+  ::google::protobuf::uint32 group_id_;
+  ::std::string* group_name_;
+  ::std::string* group_avatar_;
+  int group_join_type_;
+  int group_join_check_type_;
+  int group_update_type_;
+  ::google::protobuf::uint32 version_;
+  ::std::string* group_notice_;
+  ::std::string* attach_data_;
+  ::google::protobuf::uint32 result_code_;
+  #ifdef GOOGLE_PROTOBUF_NO_STATIC_INITIALIZER
+  friend void  protobuf_AddDesc_IM_2eGroup_2eproto_impl();
+  #else
+  friend void  protobuf_AddDesc_IM_2eGroup_2eproto();
+  #endif
+  friend void protobuf_AssignDesc_IM_2eGroup_2eproto();
+  friend void protobuf_ShutdownFile_IM_2eGroup_2eproto();
+
+  void InitAsDefaultInstance();
+  static IMGroupChangeRsp* default_instance_;
 };
 // -------------------------------------------------------------------
 
@@ -2019,6 +2433,940 @@ inline void IMGroupInfoListRsp::set_allocated_attach_data(::std::string* attach_
     attach_data_ = const_cast< ::std::string*>(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   }
   // @@protoc_insertion_point(field_set_allocated:IM.Group.IMGroupInfoListRsp.attach_data)
+}
+
+// -------------------------------------------------------------------
+
+// IMGroupChangeReq
+
+// required uint32 user_id = 1;
+inline bool IMGroupChangeReq::has_user_id() const {
+  return (_has_bits_[0] & 0x00000001u) != 0;
+}
+inline void IMGroupChangeReq::set_has_user_id() {
+  _has_bits_[0] |= 0x00000001u;
+}
+inline void IMGroupChangeReq::clear_has_user_id() {
+  _has_bits_[0] &= ~0x00000001u;
+}
+inline void IMGroupChangeReq::clear_user_id() {
+  user_id_ = 0u;
+  clear_has_user_id();
+}
+inline ::google::protobuf::uint32 IMGroupChangeReq::user_id() const {
+  // @@protoc_insertion_point(field_get:IM.Group.IMGroupChangeReq.user_id)
+  return user_id_;
+}
+inline void IMGroupChangeReq::set_user_id(::google::protobuf::uint32 value) {
+  set_has_user_id();
+  user_id_ = value;
+  // @@protoc_insertion_point(field_set:IM.Group.IMGroupChangeReq.user_id)
+}
+
+// required uint32 group_id = 2;
+inline bool IMGroupChangeReq::has_group_id() const {
+  return (_has_bits_[0] & 0x00000002u) != 0;
+}
+inline void IMGroupChangeReq::set_has_group_id() {
+  _has_bits_[0] |= 0x00000002u;
+}
+inline void IMGroupChangeReq::clear_has_group_id() {
+  _has_bits_[0] &= ~0x00000002u;
+}
+inline void IMGroupChangeReq::clear_group_id() {
+  group_id_ = 0u;
+  clear_has_group_id();
+}
+inline ::google::protobuf::uint32 IMGroupChangeReq::group_id() const {
+  // @@protoc_insertion_point(field_get:IM.Group.IMGroupChangeReq.group_id)
+  return group_id_;
+}
+inline void IMGroupChangeReq::set_group_id(::google::protobuf::uint32 value) {
+  set_has_group_id();
+  group_id_ = value;
+  // @@protoc_insertion_point(field_set:IM.Group.IMGroupChangeReq.group_id)
+}
+
+// required string group_name = 3;
+inline bool IMGroupChangeReq::has_group_name() const {
+  return (_has_bits_[0] & 0x00000004u) != 0;
+}
+inline void IMGroupChangeReq::set_has_group_name() {
+  _has_bits_[0] |= 0x00000004u;
+}
+inline void IMGroupChangeReq::clear_has_group_name() {
+  _has_bits_[0] &= ~0x00000004u;
+}
+inline void IMGroupChangeReq::clear_group_name() {
+  if (group_name_ != &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
+    group_name_->clear();
+  }
+  clear_has_group_name();
+}
+inline const ::std::string& IMGroupChangeReq::group_name() const {
+  // @@protoc_insertion_point(field_get:IM.Group.IMGroupChangeReq.group_name)
+  return *group_name_;
+}
+inline void IMGroupChangeReq::set_group_name(const ::std::string& value) {
+  set_has_group_name();
+  if (group_name_ == &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
+    group_name_ = new ::std::string;
+  }
+  group_name_->assign(value);
+  // @@protoc_insertion_point(field_set:IM.Group.IMGroupChangeReq.group_name)
+}
+inline void IMGroupChangeReq::set_group_name(const char* value) {
+  set_has_group_name();
+  if (group_name_ == &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
+    group_name_ = new ::std::string;
+  }
+  group_name_->assign(value);
+  // @@protoc_insertion_point(field_set_char:IM.Group.IMGroupChangeReq.group_name)
+}
+inline void IMGroupChangeReq::set_group_name(const char* value, size_t size) {
+  set_has_group_name();
+  if (group_name_ == &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
+    group_name_ = new ::std::string;
+  }
+  group_name_->assign(reinterpret_cast<const char*>(value), size);
+  // @@protoc_insertion_point(field_set_pointer:IM.Group.IMGroupChangeReq.group_name)
+}
+inline ::std::string* IMGroupChangeReq::mutable_group_name() {
+  set_has_group_name();
+  if (group_name_ == &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
+    group_name_ = new ::std::string;
+  }
+  // @@protoc_insertion_point(field_mutable:IM.Group.IMGroupChangeReq.group_name)
+  return group_name_;
+}
+inline ::std::string* IMGroupChangeReq::release_group_name() {
+  clear_has_group_name();
+  if (group_name_ == &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
+    return NULL;
+  } else {
+    ::std::string* temp = group_name_;
+    group_name_ = const_cast< ::std::string*>(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+    return temp;
+  }
+}
+inline void IMGroupChangeReq::set_allocated_group_name(::std::string* group_name) {
+  if (group_name_ != &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
+    delete group_name_;
+  }
+  if (group_name) {
+    set_has_group_name();
+    group_name_ = group_name;
+  } else {
+    clear_has_group_name();
+    group_name_ = const_cast< ::std::string*>(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  }
+  // @@protoc_insertion_point(field_set_allocated:IM.Group.IMGroupChangeReq.group_name)
+}
+
+// required string group_avatar = 4;
+inline bool IMGroupChangeReq::has_group_avatar() const {
+  return (_has_bits_[0] & 0x00000008u) != 0;
+}
+inline void IMGroupChangeReq::set_has_group_avatar() {
+  _has_bits_[0] |= 0x00000008u;
+}
+inline void IMGroupChangeReq::clear_has_group_avatar() {
+  _has_bits_[0] &= ~0x00000008u;
+}
+inline void IMGroupChangeReq::clear_group_avatar() {
+  if (group_avatar_ != &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
+    group_avatar_->clear();
+  }
+  clear_has_group_avatar();
+}
+inline const ::std::string& IMGroupChangeReq::group_avatar() const {
+  // @@protoc_insertion_point(field_get:IM.Group.IMGroupChangeReq.group_avatar)
+  return *group_avatar_;
+}
+inline void IMGroupChangeReq::set_group_avatar(const ::std::string& value) {
+  set_has_group_avatar();
+  if (group_avatar_ == &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
+    group_avatar_ = new ::std::string;
+  }
+  group_avatar_->assign(value);
+  // @@protoc_insertion_point(field_set:IM.Group.IMGroupChangeReq.group_avatar)
+}
+inline void IMGroupChangeReq::set_group_avatar(const char* value) {
+  set_has_group_avatar();
+  if (group_avatar_ == &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
+    group_avatar_ = new ::std::string;
+  }
+  group_avatar_->assign(value);
+  // @@protoc_insertion_point(field_set_char:IM.Group.IMGroupChangeReq.group_avatar)
+}
+inline void IMGroupChangeReq::set_group_avatar(const char* value, size_t size) {
+  set_has_group_avatar();
+  if (group_avatar_ == &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
+    group_avatar_ = new ::std::string;
+  }
+  group_avatar_->assign(reinterpret_cast<const char*>(value), size);
+  // @@protoc_insertion_point(field_set_pointer:IM.Group.IMGroupChangeReq.group_avatar)
+}
+inline ::std::string* IMGroupChangeReq::mutable_group_avatar() {
+  set_has_group_avatar();
+  if (group_avatar_ == &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
+    group_avatar_ = new ::std::string;
+  }
+  // @@protoc_insertion_point(field_mutable:IM.Group.IMGroupChangeReq.group_avatar)
+  return group_avatar_;
+}
+inline ::std::string* IMGroupChangeReq::release_group_avatar() {
+  clear_has_group_avatar();
+  if (group_avatar_ == &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
+    return NULL;
+  } else {
+    ::std::string* temp = group_avatar_;
+    group_avatar_ = const_cast< ::std::string*>(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+    return temp;
+  }
+}
+inline void IMGroupChangeReq::set_allocated_group_avatar(::std::string* group_avatar) {
+  if (group_avatar_ != &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
+    delete group_avatar_;
+  }
+  if (group_avatar) {
+    set_has_group_avatar();
+    group_avatar_ = group_avatar;
+  } else {
+    clear_has_group_avatar();
+    group_avatar_ = const_cast< ::std::string*>(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  }
+  // @@protoc_insertion_point(field_set_allocated:IM.Group.IMGroupChangeReq.group_avatar)
+}
+
+// required .IM.BaseDefine.GroupJoinType group_join_type = 5;
+inline bool IMGroupChangeReq::has_group_join_type() const {
+  return (_has_bits_[0] & 0x00000010u) != 0;
+}
+inline void IMGroupChangeReq::set_has_group_join_type() {
+  _has_bits_[0] |= 0x00000010u;
+}
+inline void IMGroupChangeReq::clear_has_group_join_type() {
+  _has_bits_[0] &= ~0x00000010u;
+}
+inline void IMGroupChangeReq::clear_group_join_type() {
+  group_join_type_ = 0;
+  clear_has_group_join_type();
+}
+inline ::IM::BaseDefine::GroupJoinType IMGroupChangeReq::group_join_type() const {
+  // @@protoc_insertion_point(field_get:IM.Group.IMGroupChangeReq.group_join_type)
+  return static_cast< ::IM::BaseDefine::GroupJoinType >(group_join_type_);
+}
+inline void IMGroupChangeReq::set_group_join_type(::IM::BaseDefine::GroupJoinType value) {
+  assert(::IM::BaseDefine::GroupJoinType_IsValid(value));
+  set_has_group_join_type();
+  group_join_type_ = value;
+  // @@protoc_insertion_point(field_set:IM.Group.IMGroupChangeReq.group_join_type)
+}
+
+// required .IM.BaseDefine.GroupJoinCheckType group_join_check_type = 6;
+inline bool IMGroupChangeReq::has_group_join_check_type() const {
+  return (_has_bits_[0] & 0x00000020u) != 0;
+}
+inline void IMGroupChangeReq::set_has_group_join_check_type() {
+  _has_bits_[0] |= 0x00000020u;
+}
+inline void IMGroupChangeReq::clear_has_group_join_check_type() {
+  _has_bits_[0] &= ~0x00000020u;
+}
+inline void IMGroupChangeReq::clear_group_join_check_type() {
+  group_join_check_type_ = 0;
+  clear_has_group_join_check_type();
+}
+inline ::IM::BaseDefine::GroupJoinCheckType IMGroupChangeReq::group_join_check_type() const {
+  // @@protoc_insertion_point(field_get:IM.Group.IMGroupChangeReq.group_join_check_type)
+  return static_cast< ::IM::BaseDefine::GroupJoinCheckType >(group_join_check_type_);
+}
+inline void IMGroupChangeReq::set_group_join_check_type(::IM::BaseDefine::GroupJoinCheckType value) {
+  assert(::IM::BaseDefine::GroupJoinCheckType_IsValid(value));
+  set_has_group_join_check_type();
+  group_join_check_type_ = value;
+  // @@protoc_insertion_point(field_set:IM.Group.IMGroupChangeReq.group_join_check_type)
+}
+
+// required .IM.BaseDefine.GroupUpdateType group_update_type = 7;
+inline bool IMGroupChangeReq::has_group_update_type() const {
+  return (_has_bits_[0] & 0x00000040u) != 0;
+}
+inline void IMGroupChangeReq::set_has_group_update_type() {
+  _has_bits_[0] |= 0x00000040u;
+}
+inline void IMGroupChangeReq::clear_has_group_update_type() {
+  _has_bits_[0] &= ~0x00000040u;
+}
+inline void IMGroupChangeReq::clear_group_update_type() {
+  group_update_type_ = 0;
+  clear_has_group_update_type();
+}
+inline ::IM::BaseDefine::GroupUpdateType IMGroupChangeReq::group_update_type() const {
+  // @@protoc_insertion_point(field_get:IM.Group.IMGroupChangeReq.group_update_type)
+  return static_cast< ::IM::BaseDefine::GroupUpdateType >(group_update_type_);
+}
+inline void IMGroupChangeReq::set_group_update_type(::IM::BaseDefine::GroupUpdateType value) {
+  assert(::IM::BaseDefine::GroupUpdateType_IsValid(value));
+  set_has_group_update_type();
+  group_update_type_ = value;
+  // @@protoc_insertion_point(field_set:IM.Group.IMGroupChangeReq.group_update_type)
+}
+
+// required uint32 version = 8;
+inline bool IMGroupChangeReq::has_version() const {
+  return (_has_bits_[0] & 0x00000080u) != 0;
+}
+inline void IMGroupChangeReq::set_has_version() {
+  _has_bits_[0] |= 0x00000080u;
+}
+inline void IMGroupChangeReq::clear_has_version() {
+  _has_bits_[0] &= ~0x00000080u;
+}
+inline void IMGroupChangeReq::clear_version() {
+  version_ = 0u;
+  clear_has_version();
+}
+inline ::google::protobuf::uint32 IMGroupChangeReq::version() const {
+  // @@protoc_insertion_point(field_get:IM.Group.IMGroupChangeReq.version)
+  return version_;
+}
+inline void IMGroupChangeReq::set_version(::google::protobuf::uint32 value) {
+  set_has_version();
+  version_ = value;
+  // @@protoc_insertion_point(field_set:IM.Group.IMGroupChangeReq.version)
+}
+
+// required string group_notice = 9;
+inline bool IMGroupChangeReq::has_group_notice() const {
+  return (_has_bits_[0] & 0x00000100u) != 0;
+}
+inline void IMGroupChangeReq::set_has_group_notice() {
+  _has_bits_[0] |= 0x00000100u;
+}
+inline void IMGroupChangeReq::clear_has_group_notice() {
+  _has_bits_[0] &= ~0x00000100u;
+}
+inline void IMGroupChangeReq::clear_group_notice() {
+  if (group_notice_ != &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
+    group_notice_->clear();
+  }
+  clear_has_group_notice();
+}
+inline const ::std::string& IMGroupChangeReq::group_notice() const {
+  // @@protoc_insertion_point(field_get:IM.Group.IMGroupChangeReq.group_notice)
+  return *group_notice_;
+}
+inline void IMGroupChangeReq::set_group_notice(const ::std::string& value) {
+  set_has_group_notice();
+  if (group_notice_ == &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
+    group_notice_ = new ::std::string;
+  }
+  group_notice_->assign(value);
+  // @@protoc_insertion_point(field_set:IM.Group.IMGroupChangeReq.group_notice)
+}
+inline void IMGroupChangeReq::set_group_notice(const char* value) {
+  set_has_group_notice();
+  if (group_notice_ == &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
+    group_notice_ = new ::std::string;
+  }
+  group_notice_->assign(value);
+  // @@protoc_insertion_point(field_set_char:IM.Group.IMGroupChangeReq.group_notice)
+}
+inline void IMGroupChangeReq::set_group_notice(const char* value, size_t size) {
+  set_has_group_notice();
+  if (group_notice_ == &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
+    group_notice_ = new ::std::string;
+  }
+  group_notice_->assign(reinterpret_cast<const char*>(value), size);
+  // @@protoc_insertion_point(field_set_pointer:IM.Group.IMGroupChangeReq.group_notice)
+}
+inline ::std::string* IMGroupChangeReq::mutable_group_notice() {
+  set_has_group_notice();
+  if (group_notice_ == &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
+    group_notice_ = new ::std::string;
+  }
+  // @@protoc_insertion_point(field_mutable:IM.Group.IMGroupChangeReq.group_notice)
+  return group_notice_;
+}
+inline ::std::string* IMGroupChangeReq::release_group_notice() {
+  clear_has_group_notice();
+  if (group_notice_ == &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
+    return NULL;
+  } else {
+    ::std::string* temp = group_notice_;
+    group_notice_ = const_cast< ::std::string*>(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+    return temp;
+  }
+}
+inline void IMGroupChangeReq::set_allocated_group_notice(::std::string* group_notice) {
+  if (group_notice_ != &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
+    delete group_notice_;
+  }
+  if (group_notice) {
+    set_has_group_notice();
+    group_notice_ = group_notice;
+  } else {
+    clear_has_group_notice();
+    group_notice_ = const_cast< ::std::string*>(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  }
+  // @@protoc_insertion_point(field_set_allocated:IM.Group.IMGroupChangeReq.group_notice)
+}
+
+// optional bytes attach_data = 20;
+inline bool IMGroupChangeReq::has_attach_data() const {
+  return (_has_bits_[0] & 0x00000200u) != 0;
+}
+inline void IMGroupChangeReq::set_has_attach_data() {
+  _has_bits_[0] |= 0x00000200u;
+}
+inline void IMGroupChangeReq::clear_has_attach_data() {
+  _has_bits_[0] &= ~0x00000200u;
+}
+inline void IMGroupChangeReq::clear_attach_data() {
+  if (attach_data_ != &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
+    attach_data_->clear();
+  }
+  clear_has_attach_data();
+}
+inline const ::std::string& IMGroupChangeReq::attach_data() const {
+  // @@protoc_insertion_point(field_get:IM.Group.IMGroupChangeReq.attach_data)
+  return *attach_data_;
+}
+inline void IMGroupChangeReq::set_attach_data(const ::std::string& value) {
+  set_has_attach_data();
+  if (attach_data_ == &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
+    attach_data_ = new ::std::string;
+  }
+  attach_data_->assign(value);
+  // @@protoc_insertion_point(field_set:IM.Group.IMGroupChangeReq.attach_data)
+}
+inline void IMGroupChangeReq::set_attach_data(const char* value) {
+  set_has_attach_data();
+  if (attach_data_ == &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
+    attach_data_ = new ::std::string;
+  }
+  attach_data_->assign(value);
+  // @@protoc_insertion_point(field_set_char:IM.Group.IMGroupChangeReq.attach_data)
+}
+inline void IMGroupChangeReq::set_attach_data(const void* value, size_t size) {
+  set_has_attach_data();
+  if (attach_data_ == &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
+    attach_data_ = new ::std::string;
+  }
+  attach_data_->assign(reinterpret_cast<const char*>(value), size);
+  // @@protoc_insertion_point(field_set_pointer:IM.Group.IMGroupChangeReq.attach_data)
+}
+inline ::std::string* IMGroupChangeReq::mutable_attach_data() {
+  set_has_attach_data();
+  if (attach_data_ == &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
+    attach_data_ = new ::std::string;
+  }
+  // @@protoc_insertion_point(field_mutable:IM.Group.IMGroupChangeReq.attach_data)
+  return attach_data_;
+}
+inline ::std::string* IMGroupChangeReq::release_attach_data() {
+  clear_has_attach_data();
+  if (attach_data_ == &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
+    return NULL;
+  } else {
+    ::std::string* temp = attach_data_;
+    attach_data_ = const_cast< ::std::string*>(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+    return temp;
+  }
+}
+inline void IMGroupChangeReq::set_allocated_attach_data(::std::string* attach_data) {
+  if (attach_data_ != &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
+    delete attach_data_;
+  }
+  if (attach_data) {
+    set_has_attach_data();
+    attach_data_ = attach_data;
+  } else {
+    clear_has_attach_data();
+    attach_data_ = const_cast< ::std::string*>(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  }
+  // @@protoc_insertion_point(field_set_allocated:IM.Group.IMGroupChangeReq.attach_data)
+}
+
+// -------------------------------------------------------------------
+
+// IMGroupChangeRsp
+
+// required uint32 user_id = 1;
+inline bool IMGroupChangeRsp::has_user_id() const {
+  return (_has_bits_[0] & 0x00000001u) != 0;
+}
+inline void IMGroupChangeRsp::set_has_user_id() {
+  _has_bits_[0] |= 0x00000001u;
+}
+inline void IMGroupChangeRsp::clear_has_user_id() {
+  _has_bits_[0] &= ~0x00000001u;
+}
+inline void IMGroupChangeRsp::clear_user_id() {
+  user_id_ = 0u;
+  clear_has_user_id();
+}
+inline ::google::protobuf::uint32 IMGroupChangeRsp::user_id() const {
+  // @@protoc_insertion_point(field_get:IM.Group.IMGroupChangeRsp.user_id)
+  return user_id_;
+}
+inline void IMGroupChangeRsp::set_user_id(::google::protobuf::uint32 value) {
+  set_has_user_id();
+  user_id_ = value;
+  // @@protoc_insertion_point(field_set:IM.Group.IMGroupChangeRsp.user_id)
+}
+
+// required uint32 group_id = 2;
+inline bool IMGroupChangeRsp::has_group_id() const {
+  return (_has_bits_[0] & 0x00000002u) != 0;
+}
+inline void IMGroupChangeRsp::set_has_group_id() {
+  _has_bits_[0] |= 0x00000002u;
+}
+inline void IMGroupChangeRsp::clear_has_group_id() {
+  _has_bits_[0] &= ~0x00000002u;
+}
+inline void IMGroupChangeRsp::clear_group_id() {
+  group_id_ = 0u;
+  clear_has_group_id();
+}
+inline ::google::protobuf::uint32 IMGroupChangeRsp::group_id() const {
+  // @@protoc_insertion_point(field_get:IM.Group.IMGroupChangeRsp.group_id)
+  return group_id_;
+}
+inline void IMGroupChangeRsp::set_group_id(::google::protobuf::uint32 value) {
+  set_has_group_id();
+  group_id_ = value;
+  // @@protoc_insertion_point(field_set:IM.Group.IMGroupChangeRsp.group_id)
+}
+
+// required string group_name = 3;
+inline bool IMGroupChangeRsp::has_group_name() const {
+  return (_has_bits_[0] & 0x00000004u) != 0;
+}
+inline void IMGroupChangeRsp::set_has_group_name() {
+  _has_bits_[0] |= 0x00000004u;
+}
+inline void IMGroupChangeRsp::clear_has_group_name() {
+  _has_bits_[0] &= ~0x00000004u;
+}
+inline void IMGroupChangeRsp::clear_group_name() {
+  if (group_name_ != &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
+    group_name_->clear();
+  }
+  clear_has_group_name();
+}
+inline const ::std::string& IMGroupChangeRsp::group_name() const {
+  // @@protoc_insertion_point(field_get:IM.Group.IMGroupChangeRsp.group_name)
+  return *group_name_;
+}
+inline void IMGroupChangeRsp::set_group_name(const ::std::string& value) {
+  set_has_group_name();
+  if (group_name_ == &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
+    group_name_ = new ::std::string;
+  }
+  group_name_->assign(value);
+  // @@protoc_insertion_point(field_set:IM.Group.IMGroupChangeRsp.group_name)
+}
+inline void IMGroupChangeRsp::set_group_name(const char* value) {
+  set_has_group_name();
+  if (group_name_ == &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
+    group_name_ = new ::std::string;
+  }
+  group_name_->assign(value);
+  // @@protoc_insertion_point(field_set_char:IM.Group.IMGroupChangeRsp.group_name)
+}
+inline void IMGroupChangeRsp::set_group_name(const char* value, size_t size) {
+  set_has_group_name();
+  if (group_name_ == &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
+    group_name_ = new ::std::string;
+  }
+  group_name_->assign(reinterpret_cast<const char*>(value), size);
+  // @@protoc_insertion_point(field_set_pointer:IM.Group.IMGroupChangeRsp.group_name)
+}
+inline ::std::string* IMGroupChangeRsp::mutable_group_name() {
+  set_has_group_name();
+  if (group_name_ == &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
+    group_name_ = new ::std::string;
+  }
+  // @@protoc_insertion_point(field_mutable:IM.Group.IMGroupChangeRsp.group_name)
+  return group_name_;
+}
+inline ::std::string* IMGroupChangeRsp::release_group_name() {
+  clear_has_group_name();
+  if (group_name_ == &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
+    return NULL;
+  } else {
+    ::std::string* temp = group_name_;
+    group_name_ = const_cast< ::std::string*>(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+    return temp;
+  }
+}
+inline void IMGroupChangeRsp::set_allocated_group_name(::std::string* group_name) {
+  if (group_name_ != &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
+    delete group_name_;
+  }
+  if (group_name) {
+    set_has_group_name();
+    group_name_ = group_name;
+  } else {
+    clear_has_group_name();
+    group_name_ = const_cast< ::std::string*>(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  }
+  // @@protoc_insertion_point(field_set_allocated:IM.Group.IMGroupChangeRsp.group_name)
+}
+
+// required string group_avatar = 4;
+inline bool IMGroupChangeRsp::has_group_avatar() const {
+  return (_has_bits_[0] & 0x00000008u) != 0;
+}
+inline void IMGroupChangeRsp::set_has_group_avatar() {
+  _has_bits_[0] |= 0x00000008u;
+}
+inline void IMGroupChangeRsp::clear_has_group_avatar() {
+  _has_bits_[0] &= ~0x00000008u;
+}
+inline void IMGroupChangeRsp::clear_group_avatar() {
+  if (group_avatar_ != &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
+    group_avatar_->clear();
+  }
+  clear_has_group_avatar();
+}
+inline const ::std::string& IMGroupChangeRsp::group_avatar() const {
+  // @@protoc_insertion_point(field_get:IM.Group.IMGroupChangeRsp.group_avatar)
+  return *group_avatar_;
+}
+inline void IMGroupChangeRsp::set_group_avatar(const ::std::string& value) {
+  set_has_group_avatar();
+  if (group_avatar_ == &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
+    group_avatar_ = new ::std::string;
+  }
+  group_avatar_->assign(value);
+  // @@protoc_insertion_point(field_set:IM.Group.IMGroupChangeRsp.group_avatar)
+}
+inline void IMGroupChangeRsp::set_group_avatar(const char* value) {
+  set_has_group_avatar();
+  if (group_avatar_ == &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
+    group_avatar_ = new ::std::string;
+  }
+  group_avatar_->assign(value);
+  // @@protoc_insertion_point(field_set_char:IM.Group.IMGroupChangeRsp.group_avatar)
+}
+inline void IMGroupChangeRsp::set_group_avatar(const char* value, size_t size) {
+  set_has_group_avatar();
+  if (group_avatar_ == &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
+    group_avatar_ = new ::std::string;
+  }
+  group_avatar_->assign(reinterpret_cast<const char*>(value), size);
+  // @@protoc_insertion_point(field_set_pointer:IM.Group.IMGroupChangeRsp.group_avatar)
+}
+inline ::std::string* IMGroupChangeRsp::mutable_group_avatar() {
+  set_has_group_avatar();
+  if (group_avatar_ == &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
+    group_avatar_ = new ::std::string;
+  }
+  // @@protoc_insertion_point(field_mutable:IM.Group.IMGroupChangeRsp.group_avatar)
+  return group_avatar_;
+}
+inline ::std::string* IMGroupChangeRsp::release_group_avatar() {
+  clear_has_group_avatar();
+  if (group_avatar_ == &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
+    return NULL;
+  } else {
+    ::std::string* temp = group_avatar_;
+    group_avatar_ = const_cast< ::std::string*>(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+    return temp;
+  }
+}
+inline void IMGroupChangeRsp::set_allocated_group_avatar(::std::string* group_avatar) {
+  if (group_avatar_ != &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
+    delete group_avatar_;
+  }
+  if (group_avatar) {
+    set_has_group_avatar();
+    group_avatar_ = group_avatar;
+  } else {
+    clear_has_group_avatar();
+    group_avatar_ = const_cast< ::std::string*>(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  }
+  // @@protoc_insertion_point(field_set_allocated:IM.Group.IMGroupChangeRsp.group_avatar)
+}
+
+// required .IM.BaseDefine.GroupJoinType group_join_type = 5;
+inline bool IMGroupChangeRsp::has_group_join_type() const {
+  return (_has_bits_[0] & 0x00000010u) != 0;
+}
+inline void IMGroupChangeRsp::set_has_group_join_type() {
+  _has_bits_[0] |= 0x00000010u;
+}
+inline void IMGroupChangeRsp::clear_has_group_join_type() {
+  _has_bits_[0] &= ~0x00000010u;
+}
+inline void IMGroupChangeRsp::clear_group_join_type() {
+  group_join_type_ = 0;
+  clear_has_group_join_type();
+}
+inline ::IM::BaseDefine::GroupJoinType IMGroupChangeRsp::group_join_type() const {
+  // @@protoc_insertion_point(field_get:IM.Group.IMGroupChangeRsp.group_join_type)
+  return static_cast< ::IM::BaseDefine::GroupJoinType >(group_join_type_);
+}
+inline void IMGroupChangeRsp::set_group_join_type(::IM::BaseDefine::GroupJoinType value) {
+  assert(::IM::BaseDefine::GroupJoinType_IsValid(value));
+  set_has_group_join_type();
+  group_join_type_ = value;
+  // @@protoc_insertion_point(field_set:IM.Group.IMGroupChangeRsp.group_join_type)
+}
+
+// required .IM.BaseDefine.GroupJoinCheckType group_join_check_type = 6;
+inline bool IMGroupChangeRsp::has_group_join_check_type() const {
+  return (_has_bits_[0] & 0x00000020u) != 0;
+}
+inline void IMGroupChangeRsp::set_has_group_join_check_type() {
+  _has_bits_[0] |= 0x00000020u;
+}
+inline void IMGroupChangeRsp::clear_has_group_join_check_type() {
+  _has_bits_[0] &= ~0x00000020u;
+}
+inline void IMGroupChangeRsp::clear_group_join_check_type() {
+  group_join_check_type_ = 0;
+  clear_has_group_join_check_type();
+}
+inline ::IM::BaseDefine::GroupJoinCheckType IMGroupChangeRsp::group_join_check_type() const {
+  // @@protoc_insertion_point(field_get:IM.Group.IMGroupChangeRsp.group_join_check_type)
+  return static_cast< ::IM::BaseDefine::GroupJoinCheckType >(group_join_check_type_);
+}
+inline void IMGroupChangeRsp::set_group_join_check_type(::IM::BaseDefine::GroupJoinCheckType value) {
+  assert(::IM::BaseDefine::GroupJoinCheckType_IsValid(value));
+  set_has_group_join_check_type();
+  group_join_check_type_ = value;
+  // @@protoc_insertion_point(field_set:IM.Group.IMGroupChangeRsp.group_join_check_type)
+}
+
+// required .IM.BaseDefine.GroupUpdateType group_update_type = 7;
+inline bool IMGroupChangeRsp::has_group_update_type() const {
+  return (_has_bits_[0] & 0x00000040u) != 0;
+}
+inline void IMGroupChangeRsp::set_has_group_update_type() {
+  _has_bits_[0] |= 0x00000040u;
+}
+inline void IMGroupChangeRsp::clear_has_group_update_type() {
+  _has_bits_[0] &= ~0x00000040u;
+}
+inline void IMGroupChangeRsp::clear_group_update_type() {
+  group_update_type_ = 0;
+  clear_has_group_update_type();
+}
+inline ::IM::BaseDefine::GroupUpdateType IMGroupChangeRsp::group_update_type() const {
+  // @@protoc_insertion_point(field_get:IM.Group.IMGroupChangeRsp.group_update_type)
+  return static_cast< ::IM::BaseDefine::GroupUpdateType >(group_update_type_);
+}
+inline void IMGroupChangeRsp::set_group_update_type(::IM::BaseDefine::GroupUpdateType value) {
+  assert(::IM::BaseDefine::GroupUpdateType_IsValid(value));
+  set_has_group_update_type();
+  group_update_type_ = value;
+  // @@protoc_insertion_point(field_set:IM.Group.IMGroupChangeRsp.group_update_type)
+}
+
+// required uint32 version = 8;
+inline bool IMGroupChangeRsp::has_version() const {
+  return (_has_bits_[0] & 0x00000080u) != 0;
+}
+inline void IMGroupChangeRsp::set_has_version() {
+  _has_bits_[0] |= 0x00000080u;
+}
+inline void IMGroupChangeRsp::clear_has_version() {
+  _has_bits_[0] &= ~0x00000080u;
+}
+inline void IMGroupChangeRsp::clear_version() {
+  version_ = 0u;
+  clear_has_version();
+}
+inline ::google::protobuf::uint32 IMGroupChangeRsp::version() const {
+  // @@protoc_insertion_point(field_get:IM.Group.IMGroupChangeRsp.version)
+  return version_;
+}
+inline void IMGroupChangeRsp::set_version(::google::protobuf::uint32 value) {
+  set_has_version();
+  version_ = value;
+  // @@protoc_insertion_point(field_set:IM.Group.IMGroupChangeRsp.version)
+}
+
+// required uint32 result_code = 9;
+inline bool IMGroupChangeRsp::has_result_code() const {
+  return (_has_bits_[0] & 0x00000100u) != 0;
+}
+inline void IMGroupChangeRsp::set_has_result_code() {
+  _has_bits_[0] |= 0x00000100u;
+}
+inline void IMGroupChangeRsp::clear_has_result_code() {
+  _has_bits_[0] &= ~0x00000100u;
+}
+inline void IMGroupChangeRsp::clear_result_code() {
+  result_code_ = 0u;
+  clear_has_result_code();
+}
+inline ::google::protobuf::uint32 IMGroupChangeRsp::result_code() const {
+  // @@protoc_insertion_point(field_get:IM.Group.IMGroupChangeRsp.result_code)
+  return result_code_;
+}
+inline void IMGroupChangeRsp::set_result_code(::google::protobuf::uint32 value) {
+  set_has_result_code();
+  result_code_ = value;
+  // @@protoc_insertion_point(field_set:IM.Group.IMGroupChangeRsp.result_code)
+}
+
+// required string group_notice = 10;
+inline bool IMGroupChangeRsp::has_group_notice() const {
+  return (_has_bits_[0] & 0x00000200u) != 0;
+}
+inline void IMGroupChangeRsp::set_has_group_notice() {
+  _has_bits_[0] |= 0x00000200u;
+}
+inline void IMGroupChangeRsp::clear_has_group_notice() {
+  _has_bits_[0] &= ~0x00000200u;
+}
+inline void IMGroupChangeRsp::clear_group_notice() {
+  if (group_notice_ != &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
+    group_notice_->clear();
+  }
+  clear_has_group_notice();
+}
+inline const ::std::string& IMGroupChangeRsp::group_notice() const {
+  // @@protoc_insertion_point(field_get:IM.Group.IMGroupChangeRsp.group_notice)
+  return *group_notice_;
+}
+inline void IMGroupChangeRsp::set_group_notice(const ::std::string& value) {
+  set_has_group_notice();
+  if (group_notice_ == &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
+    group_notice_ = new ::std::string;
+  }
+  group_notice_->assign(value);
+  // @@protoc_insertion_point(field_set:IM.Group.IMGroupChangeRsp.group_notice)
+}
+inline void IMGroupChangeRsp::set_group_notice(const char* value) {
+  set_has_group_notice();
+  if (group_notice_ == &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
+    group_notice_ = new ::std::string;
+  }
+  group_notice_->assign(value);
+  // @@protoc_insertion_point(field_set_char:IM.Group.IMGroupChangeRsp.group_notice)
+}
+inline void IMGroupChangeRsp::set_group_notice(const char* value, size_t size) {
+  set_has_group_notice();
+  if (group_notice_ == &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
+    group_notice_ = new ::std::string;
+  }
+  group_notice_->assign(reinterpret_cast<const char*>(value), size);
+  // @@protoc_insertion_point(field_set_pointer:IM.Group.IMGroupChangeRsp.group_notice)
+}
+inline ::std::string* IMGroupChangeRsp::mutable_group_notice() {
+  set_has_group_notice();
+  if (group_notice_ == &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
+    group_notice_ = new ::std::string;
+  }
+  // @@protoc_insertion_point(field_mutable:IM.Group.IMGroupChangeRsp.group_notice)
+  return group_notice_;
+}
+inline ::std::string* IMGroupChangeRsp::release_group_notice() {
+  clear_has_group_notice();
+  if (group_notice_ == &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
+    return NULL;
+  } else {
+    ::std::string* temp = group_notice_;
+    group_notice_ = const_cast< ::std::string*>(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+    return temp;
+  }
+}
+inline void IMGroupChangeRsp::set_allocated_group_notice(::std::string* group_notice) {
+  if (group_notice_ != &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
+    delete group_notice_;
+  }
+  if (group_notice) {
+    set_has_group_notice();
+    group_notice_ = group_notice;
+  } else {
+    clear_has_group_notice();
+    group_notice_ = const_cast< ::std::string*>(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  }
+  // @@protoc_insertion_point(field_set_allocated:IM.Group.IMGroupChangeRsp.group_notice)
+}
+
+// optional bytes attach_data = 20;
+inline bool IMGroupChangeRsp::has_attach_data() const {
+  return (_has_bits_[0] & 0x00000400u) != 0;
+}
+inline void IMGroupChangeRsp::set_has_attach_data() {
+  _has_bits_[0] |= 0x00000400u;
+}
+inline void IMGroupChangeRsp::clear_has_attach_data() {
+  _has_bits_[0] &= ~0x00000400u;
+}
+inline void IMGroupChangeRsp::clear_attach_data() {
+  if (attach_data_ != &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
+    attach_data_->clear();
+  }
+  clear_has_attach_data();
+}
+inline const ::std::string& IMGroupChangeRsp::attach_data() const {
+  // @@protoc_insertion_point(field_get:IM.Group.IMGroupChangeRsp.attach_data)
+  return *attach_data_;
+}
+inline void IMGroupChangeRsp::set_attach_data(const ::std::string& value) {
+  set_has_attach_data();
+  if (attach_data_ == &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
+    attach_data_ = new ::std::string;
+  }
+  attach_data_->assign(value);
+  // @@protoc_insertion_point(field_set:IM.Group.IMGroupChangeRsp.attach_data)
+}
+inline void IMGroupChangeRsp::set_attach_data(const char* value) {
+  set_has_attach_data();
+  if (attach_data_ == &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
+    attach_data_ = new ::std::string;
+  }
+  attach_data_->assign(value);
+  // @@protoc_insertion_point(field_set_char:IM.Group.IMGroupChangeRsp.attach_data)
+}
+inline void IMGroupChangeRsp::set_attach_data(const void* value, size_t size) {
+  set_has_attach_data();
+  if (attach_data_ == &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
+    attach_data_ = new ::std::string;
+  }
+  attach_data_->assign(reinterpret_cast<const char*>(value), size);
+  // @@protoc_insertion_point(field_set_pointer:IM.Group.IMGroupChangeRsp.attach_data)
+}
+inline ::std::string* IMGroupChangeRsp::mutable_attach_data() {
+  set_has_attach_data();
+  if (attach_data_ == &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
+    attach_data_ = new ::std::string;
+  }
+  // @@protoc_insertion_point(field_mutable:IM.Group.IMGroupChangeRsp.attach_data)
+  return attach_data_;
+}
+inline ::std::string* IMGroupChangeRsp::release_attach_data() {
+  clear_has_attach_data();
+  if (attach_data_ == &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
+    return NULL;
+  } else {
+    ::std::string* temp = attach_data_;
+    attach_data_ = const_cast< ::std::string*>(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+    return temp;
+  }
+}
+inline void IMGroupChangeRsp::set_allocated_attach_data(::std::string* attach_data) {
+  if (attach_data_ != &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
+    delete attach_data_;
+  }
+  if (attach_data) {
+    set_has_attach_data();
+    attach_data_ = attach_data;
+  } else {
+    clear_has_attach_data();
+    attach_data_ = const_cast< ::std::string*>(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  }
+  // @@protoc_insertion_point(field_set_allocated:IM.Group.IMGroupChangeRsp.attach_data)
 }
 
 // -------------------------------------------------------------------

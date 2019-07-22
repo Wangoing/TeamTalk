@@ -1,0 +1,1 @@
+/usr/bin/c++       CMakeFiles/msfs.dir/FileManager.cpp.o CMakeFiles/msfs.dir/main.cpp.o CMakeFiles/msfs.dir/HttpConn.cpp.o CMakeFiles/msfs.dir/FileLin.cpp.o CMakeFiles/msfs.dir/StringUtils.cpp.o  -o msfs  -L.  -L../base  -L../base/slog/lib -rdynamic -lpthread -lbase -lslog -Wl,-rpath,.:../base:../base/slog/lib 

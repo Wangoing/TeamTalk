@@ -1,0 +1,1 @@
+/root/TeamTalk/server/src/msg_server/CMakeFiles/msg_server.dir

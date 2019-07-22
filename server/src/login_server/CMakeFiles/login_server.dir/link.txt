@@ -1,0 +1,1 @@
+/usr/bin/c++       CMakeFiles/login_server.dir/ipparser.cpp.o CMakeFiles/login_server.dir/HttpConn.cpp.o CMakeFiles/login_server.dir/LoginConn.cpp.o CMakeFiles/login_server.dir/login_server.cpp.o  -o login_server  -L.  -L../base  -L../base/pb/lib/linux  -L../base/slog/lib -rdynamic -lbase -lprotobuf-lite -lslog -lpthread -Wl,-rpath,.:../base:../base/pb/lib/linux:../base/slog/lib 

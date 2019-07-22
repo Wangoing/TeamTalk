@@ -40,9 +40,13 @@ public:
     void getUnReadCntAll(uint32_t nUserId, uint32_t &nTotalCnt);
     void getMsgByMsgId(uint32_t nUserId, uint32_t nGroupId, const list<uint32_t>& lsMsgId, list<IM::BaseDefine::MsgInfo>& lsMsg);
     bool resetMsgId(uint32_t nGroupId);
+	bool updateMessageStatus(uint32_t nFromId, uint32_t nGroupId, uint32_t nUpdateTime,uint32_t nMsgId, uint32_t nStatus);
+	bool groupMessageRead(uint32_t nUserId, uint32_t nGroupId, uint32_t nMsgId);
+	void getReadAndUnReadByMsgId(uint32_t nMsgId, uint32_t nGroupId, uint32_t &nReadCnt,  uint32_t &nUnReadCnt);
 private:
     CGroupMessageModel();
     bool incMessageCount(uint32_t nUserId, uint32_t nGroupId);
+	bool incMessageReadCount(uint32_t nUserId, uint32_t nGroupId, uint32_t nMsgId, list<uint32_t> &lsUserId);
 
 private:
 	static CGroupMessageModel*	m_pInstance;

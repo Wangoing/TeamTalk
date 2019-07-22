@@ -1,0 +1,102 @@
+2019-07-04 14:02:39,117 [INFO  IM] - <BaseSocket.cpp>|<90>|<Connect>,CBaseSocket::Connect, server_ip=47.93.103.246, port=8000
+2019-07-04 14:22:52,288 [INFO  IM] - <imconn.cpp>|<113>|<Send>,send busy, remain=35 
+2019-07-04 14:25:05,065 [INFO  IM] - <BaseSocket.cpp>|<90>|<Connect>,CBaseSocket::Connect, server_ip=47.93.103.246, port=8000
+2019-07-04 14:27:55,584 [INFO  IM] - <BaseSocket.cpp>|<90>|<Connect>,CBaseSocket::Connect, server_ip=47.93.103.246, port=8000
+2019-07-04 14:31:34,889 [INFO  IM] - <BaseSocket.cpp>|<90>|<Connect>,CBaseSocket::Connect, server_ip=47.93.103.246, port=8000
+2019-07-04 14:33:12,632 [INFO  IM] - <BaseSocket.cpp>|<90>|<Connect>,CBaseSocket::Connect, server_ip=47.93.103.246, port=8000
+2019-07-04 14:34:43,472 [INFO  IM] - <imconn.cpp>|<113>|<Send>,send busy, remain=35 
+2019-07-04 14:35:20,250 [INFO  IM] - <BaseSocket.cpp>|<90>|<Connect>,CBaseSocket::Connect, server_ip=47.93.103.246, port=8000
+2019-07-04 14:39:41,131 [INFO  IM] - <BaseSocket.cpp>|<90>|<Connect>,CBaseSocket::Connect, server_ip=47.93.103.246, port=8000
+2019-07-04 14:44:58,531 [INFO  IM] - <BaseSocket.cpp>|<90>|<Connect>,CBaseSocket::Connect, server_ip=47.93.103.246, port=8000
+2019-07-04 15:19:37,947 [INFO  IM] - <BaseSocket.cpp>|<90>|<Connect>,CBaseSocket::Connect, server_ip=47.93.103.246, port=8000
+2019-07-04 15:21:24,600 [INFO  IM] - <BaseSocket.cpp>|<90>|<Connect>,CBaseSocket::Connect, server_ip=47.93.103.246, port=8000
+2019-07-04 15:45:09,760 [INFO  IM] - <BaseSocket.cpp>|<90>|<Connect>,CBaseSocket::Connect, server_ip=47.93.103.246, port=8000
+2019-07-04 15:45:09,760 [INFO  IM] - <imconn.cpp>|<113>|<Send>,send busy, remain=54 
+2019-07-04 15:48:34,642 [INFO  IM] - <BaseSocket.cpp>|<90>|<Connect>,CBaseSocket::Connect, server_ip=47.93.103.246, port=8000
+2019-07-04 15:48:34,642 [INFO  IM] - <ClientConn.cpp>|<71>|<login>,ClientConn login====[15804512808@139.com]
+2019-07-04 15:48:34,642 [INFO  IM] - <imconn.cpp>|<113>|<Send>,send busy, remain=54 
+2019-07-04 15:51:28,329 [INFO  IM] - <BaseSocket.cpp>|<90>|<Connect>,CBaseSocket::Connect, server_ip=47.93.103.246, port=8000
+2019-07-04 15:51:28,329 [INFO  IM] - <ClientConn.cpp>|<71>|<login>,ClientConn login====[15804512808@139.com]
+2019-07-04 15:51:28,329 [INFO  IM] - <imconn.cpp>|<113>|<Send>,send busy, remain=54 
+2019-07-04 15:51:57,761 [INFO  IM] - <BaseSocket.cpp>|<90>|<Connect>,CBaseSocket::Connect, server_ip=47.93.103.246, port=8000
+2019-07-04 15:51:57,761 [INFO  IM] - <ClientConn.cpp>|<71>|<login>,ClientConn login====[15804512808@139.com]
+2019-07-04 15:51:57,761 [INFO  IM] - <imconn.cpp>|<113>|<Send>,send busy, remain=54 
+2019-07-04 15:53:34,873 [INFO  IM] - <BaseSocket.cpp>|<90>|<Connect>,CBaseSocket::Connect, server_ip=47.93.103.246, port=8000
+2019-07-04 15:53:34,873 [INFO  IM] - <ClientConn.cpp>|<71>|<login>,ClientConn login====[15804512808@139.com]
+2019-07-04 15:53:34,873 [INFO  IM] - <imconn.cpp>|<113>|<Send>,send busy, remain=54 
+2019-07-04 16:29:31,548 [INFO  IM] - <BaseSocket.cpp>|<90>|<Connect>,CBaseSocket::Connect, server_ip=47.93.103.246, port=8000
+2019-07-04 16:29:31,548 [INFO  IM] - <ClientConn.cpp>|<71>|<login>,ClientConn login====[15804512808@139.com],m_handle=[6]
+2019-07-04 16:29:31,548 [INFO  IM] - <imconn.cpp>|<113>|<Send>,send busy, remain=54 
+2019-07-04 16:31:29,861 [INFO  IM] - <BaseSocket.cpp>|<90>|<Connect>,CBaseSocket::Connect, server_ip=47.93.103.246, port=8000
+2019-07-04 16:31:29,861 [INFO  IM] - <ClientConn.cpp>|<71>|<login>,ClientConn login====[15804512808@139.com],m_handle=[6]
+2019-07-04 16:31:29,861 [INFO  IM] - <imconn.cpp>|<113>|<Send>,send busy, remain=54 
+2019-07-04 16:40:15,133 [INFO  IM] - <BaseSocket.cpp>|<90>|<Connect>,CBaseSocket::Connect, server_ip=172.17.71.189, port=8000
+2019-07-04 16:40:15,133 [INFO  IM] - <ClientConn.cpp>|<71>|<login>,ClientConn login====[15804512808@139.com],m_handle=[6]
+2019-07-04 16:43:30,456 [INFO  IM] - <BaseSocket.cpp>|<90>|<Connect>,CBaseSocket::Connect, server_ip=172.17.71.189, port=8000
+2019-07-04 16:43:30,456 [INFO  IM] - <ClientConn.cpp>|<71>|<login>,ClientConn login====[15804512808@139.com],m_handle=[6]
+2019-07-04 16:43:30,456 [INFO  IM] - <imconn.cpp>|<113>|<Send>,send busy, remain=54 
+2019-07-04 16:44:29,593 [INFO  IM] - <BaseSocket.cpp>|<90>|<Connect>,CBaseSocket::Connect, server_ip=172.17.71.189, port=8000
+2019-07-04 16:44:29,593 [INFO  IM] - <ClientConn.cpp>|<71>|<login>,ClientConn login====[15804512808@139.com],m_handle=[7]
+2019-07-04 16:44:29,593 [INFO  IM] - <imconn.cpp>|<113>|<Send>,send busy, remain=54 
+2019-07-04 17:00:33,552 [INFO  IM] - <BaseSocket.cpp>|<90>|<Connect>,CBaseSocket::Connect, server_ip=172.17.71.189, port=8000
+2019-07-04 17:00:33,552 [INFO  IM] - <ClientConn.cpp>|<71>|<login>,ClientConn login====[15804512808@139.com],m_handle=[6]
+2019-07-04 17:06:52,433 [INFO  IM] - <BaseSocket.cpp>|<90>|<Connect>,CBaseSocket::Connect, server_ip=172.17.71.189, port=8000
+2019-07-04 17:06:52,434 [INFO  IM] - <ClientConn.cpp>|<71>|<login>,ClientConn login====[15804512808@139.com],m_handle=[7]
+2019-07-04 17:06:52,434 [INFO  IM] - <imconn.cpp>|<113>|<Send>,send busy, remain=54 
+2019-07-04 17:07:24,792 [INFO  IM] - <BaseSocket.cpp>|<90>|<Connect>,CBaseSocket::Connect, server_ip=172.17.71.189, port=8000
+2019-07-04 17:07:24,792 [INFO  IM] - <ClientConn.cpp>|<71>|<login>,ClientConn login====[15804512808@139.com],m_handle=[6]
+2019-07-04 17:13:33,106 [INFO  IM] - <BaseSocket.cpp>|<90>|<Connect>,CBaseSocket::Connect, server_ip=172.17.71.189, port=8000
+2019-07-04 17:13:33,107 [INFO  IM] - <ClientConn.cpp>|<71>|<login>,ClientConn login====[15804512808@139.com],m_handle=[6]
+2019-07-04 17:19:59,356 [INFO  IM] - <BaseSocket.cpp>|<90>|<Connect>,CBaseSocket::Connect, server_ip=172.17.71.189, port=8000
+2019-07-04 17:19:59,356 [INFO  IM] - <ClientConn.cpp>|<71>|<login>,ClientConn login====[15804512808@139.com],m_handle=[6]
+2019-07-04 17:25:47,237 [INFO  IM] - <BaseSocket.cpp>|<90>|<Connect>,CBaseSocket::Connect, server_ip=172.17.71.189, port=8000
+2019-07-04 17:25:47,237 [INFO  IM] - <ClientConn.cpp>|<71>|<login>,ClientConn login====[15804512808@139.com],m_handle=[6]
+2019-07-04 17:25:56,405 [INFO  IM] - <BaseSocket.cpp>|<90>|<Connect>,CBaseSocket::Connect, server_ip=172.17.71.189, port=8000
+2019-07-04 17:25:56,406 [INFO  IM] - <ClientConn.cpp>|<71>|<login>,ClientConn login====[15804512808@139.com],m_handle=[6]
+2019-07-04 17:27:20,589 [INFO  IM] - <BaseSocket.cpp>|<90>|<Connect>,CBaseSocket::Connect, server_ip=172.17.71.189, port=8000
+2019-07-04 17:27:20,589 [INFO  IM] - <ClientConn.cpp>|<71>|<login>,ClientConn login====[15804512808@139.com],m_handle=[7]
+2019-07-04 17:27:20,589 [INFO  IM] - <imconn.cpp>|<113>|<Send>,send busy, remain=80 
+2019-07-04 21:43:16,020 [INFO  IM] - <BaseSocket.cpp>|<90>|<Connect>,CBaseSocket::Connect, server_ip=172.17.71.189, port=8000
+2019-07-04 21:43:16,021 [INFO  IM] - <ClientConn.cpp>|<71>|<login>,ClientConn login====[15804512808@139.com],m_handle=[6]
+2019-07-05 10:01:07,158 [INFO  IM] - <BaseSocket.cpp>|<90>|<Connect>,CBaseSocket::Connect, server_ip=172.17.71.189, port=8000
+2019-07-05 10:01:07,240 [INFO  IM] - <ClientConn.cpp>|<71>|<login>,ClientConn login====[15804512808@139.com],m_handle=[6]
+2019-07-05 10:01:17,019 [INFO  IM] - <Client.cpp>|<207>|<addCollect>,addCollect fromId=[0]
+2019-07-05 10:03:23,535 [INFO  IM] - <BaseSocket.cpp>|<90>|<Connect>,CBaseSocket::Connect, server_ip=172.17.71.189, port=8000
+2019-07-05 10:03:23,536 [INFO  IM] - <ClientConn.cpp>|<71>|<login>,ClientConn login====[15804512808@139.com],m_handle=[6]
+2019-07-05 10:03:39,324 [INFO  IM] - <Client.cpp>|<207>|<addCollect>,addCollect fromId=[10]
+2019-07-05 10:45:01,162 [INFO  IM] - <BaseSocket.cpp>|<90>|<Connect>,CBaseSocket::Connect, server_ip=172.17.71.189, port=8000
+2019-07-05 10:45:01,163 [INFO  IM] - <ClientConn.cpp>|<71>|<login>,ClientConn login====[15804512808@139.com],m_handle=[6]
+2019-07-05 10:45:01,163 [INFO  IM] - <imconn.cpp>|<113>|<Send>,send busy, remain=80 
+2019-07-05 10:45:06,384 [INFO  IM] - <Client.cpp>|<207>|<addCollect>,addCollect fromId=[10]
+2019-07-05 10:46:58,821 [INFO  IM] - <BaseSocket.cpp>|<90>|<Connect>,CBaseSocket::Connect, server_ip=172.17.71.189, port=8000
+2019-07-05 10:46:58,821 [INFO  IM] - <ClientConn.cpp>|<71>|<login>,ClientConn login====[15804512808@139.com],m_handle=[6]
+2019-07-05 10:47:13,737 [INFO  IM] - <Client.cpp>|<207>|<addCollect>,addCollect fromId=[10]
+2019-07-05 10:51:50,238 [INFO  IM] - <BaseSocket.cpp>|<90>|<Connect>,CBaseSocket::Connect, server_ip=172.17.71.189, port=8000
+2019-07-05 10:51:50,238 [INFO  IM] - <ClientConn.cpp>|<71>|<login>,ClientConn login====[15804512808@139.com],m_handle=[6]
+2019-07-05 10:51:56,562 [INFO  IM] - <Client.cpp>|<207>|<addCollect>,addCollect fromId=[10]
+2019-07-05 13:59:49,464 [INFO  IM] - <BaseSocket.cpp>|<90>|<Connect>,CBaseSocket::Connect, server_ip=172.17.71.189, port=8000
+2019-07-05 13:59:49,473 [INFO  IM] - <ClientConn.cpp>|<71>|<login>,ClientConn login====[15804512808@139.com],m_handle=[6]
+2019-07-05 13:59:58,053 [INFO  IM] - <Client.cpp>|<207>|<addCollect>,addCollect fromId=[10]
+2019-07-05 15:34:00,582 [INFO  IM] - <BaseSocket.cpp>|<90>|<Connect>,CBaseSocket::Connect, server_ip=172.17.71.189, port=8000
+2019-07-05 15:34:00,583 [INFO  IM] - <ClientConn.cpp>|<71>|<login>,ClientConn login====[15804512808@139.com],m_handle=[6]
+2019-07-05 15:34:00,583 [INFO  IM] - <imconn.cpp>|<113>|<Send>,send busy, remain=80 
+2019-07-05 15:34:55,931 [INFO  IM] - <BaseSocket.cpp>|<90>|<Connect>,CBaseSocket::Connect, server_ip=172.17.71.189, port=8000
+2019-07-05 15:34:55,932 [INFO  IM] - <ClientConn.cpp>|<71>|<login>,ClientConn login====[15804512808@139.com],m_handle=[6]
+2019-07-05 15:35:01,178 [INFO  IM] - <Client.cpp>|<214>|<getCollect>,addCollect fromId=[10]
+2019-07-05 15:36:00,040 [INFO  IM] - <Client.cpp>|<214>|<getCollect>,addCollect fromId=[10]
+2019-07-05 15:37:11,566 [INFO  IM] - <BaseSocket.cpp>|<90>|<Connect>,CBaseSocket::Connect, server_ip=172.17.71.189, port=8000
+2019-07-05 15:37:11,566 [INFO  IM] - <ClientConn.cpp>|<71>|<login>,ClientConn login====[15804512808@139.com],m_handle=[6]
+2019-07-05 15:37:16,568 [INFO  IM] - <Client.cpp>|<214>|<getCollect>,addCollect fromId=[10]
+2019-07-05 15:37:38,200 [INFO  IM] - <Client.cpp>|<214>|<getCollect>,addCollect fromId=[10]
+2019-07-05 15:40:09,584 [INFO  IM] - <Client.cpp>|<214>|<getCollect>,addCollect fromId=[10]
+2019-07-05 16:00:22,440 [INFO  IM] - <BaseSocket.cpp>|<90>|<Connect>,CBaseSocket::Connect, server_ip=172.17.71.189, port=8000
+2019-07-05 16:00:22,441 [INFO  IM] - <ClientConn.cpp>|<71>|<login>,ClientConn login====[15804512808@139.com],m_handle=[6]
+2019-07-05 16:00:29,543 [INFO  IM] - <Client.cpp>|<214>|<getCollect>,addCollect fromId=[10]
+2019-07-05 16:08:29,133 [INFO  IM] - <BaseSocket.cpp>|<90>|<Connect>,CBaseSocket::Connect, server_ip=172.17.71.189, port=8000
+2019-07-05 16:08:29,133 [INFO  IM] - <ClientConn.cpp>|<71>|<login>,ClientConn login====[15804512808@139.com],m_handle=[6]
+2019-07-05 16:08:32,858 [INFO  IM] - <Client.cpp>|<214>|<getCollect>,addCollect fromId=[10]
+2019-07-05 16:09:47,897 [INFO  IM] - <Client.cpp>|<214>|<getCollect>,addCollect fromId=[10]
+2019-07-05 16:13:19,038 [INFO  IM] - <BaseSocket.cpp>|<90>|<Connect>,CBaseSocket::Connect, server_ip=172.17.71.189, port=8000
+2019-07-05 16:13:19,039 [INFO  IM] - <ClientConn.cpp>|<71>|<login>,ClientConn login====[15804512808@139.com],m_handle=[6]
+2019-07-05 16:13:33,523 [INFO  IM] - <Client.cpp>|<214>|<getCollect>,addCollect fromId=[10]
+2019-07-05 16:19:01,556 [INFO  IM] - <Client.cpp>|<214>|<getCollect>,addCollect fromId=[10]

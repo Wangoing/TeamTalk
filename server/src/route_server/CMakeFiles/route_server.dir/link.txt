@@ -1,0 +1,1 @@
+/usr/bin/c++       CMakeFiles/route_server.dir/route_server.cpp.o CMakeFiles/route_server.dir/RouteConn.cpp.o CMakeFiles/route_server.dir/UserInfo.cpp.o  -o route_server  -L.  -L../base  -L../base/pb/lib/linux  -L../base/slog/lib -rdynamic -lbase -lslog -lprotobuf-lite -lpthread -Wl,-rpath,.:../base:../base/pb/lib/linux:../base/slog/lib 

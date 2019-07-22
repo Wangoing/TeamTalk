@@ -13,6 +13,7 @@
 #include "../CachePool.h"
 #include "MessageCounter.h"
 #include "MessageModel.h"
+#include "RelationModel.h"
 #include "GroupMessageModel.h"
 #include "IM.Message.pb.h"
 #include "IM.BaseDefine.pb.h"
@@ -70,13 +71,67 @@ namespace DB_PROXY {
 
     void clearUnreadMsgCounter(CImPdu* pPdu, uint32_t conn_uuid)
     {
+    	bool bRet = false;
         IM::Message::IMMsgDataReadAck msg;
+		IM::Message::IMMsgDataReadNotify msgResp;
         if(msg.ParseFromArray(pPdu->GetBodyData(), pPdu->GetBodyLength()))
         {
             uint32_t nUserId = msg.user_id();
             uint32_t nFromId = msg.session_id();
+			uint32_t nMsgId = msg.msg_id();
             IM::BaseDefine::SessionType nSessionType = msg.session_type();
+			//清除redis数据
             CUserModel::getInstance()->clearUserCounter(nUserId, nFromId, nSessionType);
+			//当是个人信息的时候，将信息修改为已读
+			if(nSessionType == IM::BaseDefine::SESSION_TYPE_SINGLE)
+			{
+				//修改数据库中表数据
+				uint32_t nRelateId = CRelationModel::getInstance()->getRelationId(nFromId, nUserId, true);
+	            if(nRelateId != INVALID_VALUE)
+	            {
+	            	uint32_t nNow = (uint32_t)time(NULL);
+	                bRet = CMessageModel::getInstance()->updateMessageToRead(nRelateId, nFromId, nUserId, nNow, nMsgId);
+					if(bRet){
+						
+					}else{
+						log("updateMessageToRead is fail. fromId=%u, toId=%u, nRelateId=%u", nFromId, nUserId, nRelateId);
+					}
+	            }
+	            else{
+	                log("relateId is invalid. fromId=%u, toId=%u, nRelateId=%u", nFromId, nUserId, nRelateId);
+	            }
+			}
+			//当时群组消息的时候，需要处理redis中保留的消息已读未读数据
+			//只有当时群组消息的已读时，才需要反馈消息
+			if(nSessionType == IM::BaseDefine::SESSION_TYPE_GROUP)
+			{
+				CImPdu* pPduResp = new CImPdu;
+				CGroupMessageModel::getInstance()->groupMessageRead(nUserId, nFromId, nMsgId);
+
+				uint32_t nMsgReadCount = 0;
+				uint32_t nMsgUnReadCount = 0;
+				CGroupMessageModel::getInstance()->getReadAndUnReadByMsgId(nUserId, nFromId, nMsgReadCount, nMsgUnReadCount);
+
+				msgResp.set_user_id(nUserId);
+				msgResp.set_session_id(nFromId);
+				msgResp.set_msg_id(nMsgId);
+				msgResp.set_session_type(nSessionType);
+				msgResp.set_msg_read_count(nMsgReadCount);
+				msgResp.set_msg_unread_count(nMsgUnReadCount);
+
+				list<uint32_t> lsUserIds;
+        		CGroupModel::getInstance()->getGroupUser(nFromId, lsUserIds);
+				for(auto itUserId=lsUserIds.begin(); itUserId!=lsUserIds.end(); ++itUserId)
+		        {
+		            msgResp.add_group_member_list(*itUserId);
+		        }
+
+				pPduResp->SetPBMsg(&msgResp);
+            	pPduResp->SetSeqNum(pPdu->GetSeqNum());
+            	pPduResp->SetServiceId(IM::BaseDefine::SID_MSG);
+            	pPduResp->SetCommandId(IM::BaseDefine::CID_GROUP_MSG_READ_RESPONSE);
+            	CProxyConn::AddResponsePdu(conn_uuid, pPduResp);
+			}
             log("userId=%u, peerId=%u, type=%u", nFromId, nUserId, nSessionType);
         }
         else

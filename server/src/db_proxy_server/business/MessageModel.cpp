@@ -71,6 +71,7 @@ void CMessageModel::getMessage(uint32_t nUserId, uint32_t nPeerId, uint32_t nMsg
                     cMsg.set_msg_id(pResultSet->GetInt("msgId"));
                     cMsg.set_from_session_id(pResultSet->GetInt("fromId"));
                     cMsg.set_create_time(pResultSet->GetInt("created"));
+					cMsg.set_is_read(pResultSet->GetInt("isRead"));
                     IM::BaseDefine::MsgType nMsgType = IM::BaseDefine::MsgType(pResultSet->GetInt("type"));
                     if(IM::BaseDefine::MsgType_IsValid(nMsgType))
                     {
@@ -163,6 +164,88 @@ bool CMessageModel::sendMessage(uint32_t nRelateId, uint32_t nFromId, uint32_t n
     }
 	return bRet;
 }
+
+bool CMessageModel::updateMessageStatus(uint32_t nRelateId,uint32_t nFromId, uint32_t nToId, uint32_t nUpdateTime,uint32_t nMsgId, uint32_t nStatus)
+{
+    bool bRet = false;
+    
+    CDBManager* pDBManager = CDBManager::getInstance();
+    CDBConn* pDBConn = pDBManager->GetDBConn("teamtalk_master");
+    if (pDBConn)
+    {
+		string strTableName = "IMMessage_" + int2string(nRelateId % 8);
+        string strSql = "update " + strTableName + " set status=?,updated=? where toId=? and fromId=? and msgId=?";
+        
+        // 必须在释放连接前delete CPrepareStatement对象，否则有可能多个线程操作mysql对象，会crash
+        CPrepareStatement* pStmt = new CPrepareStatement();
+        if (pStmt->Init(pDBConn->GetMysql(), strSql))
+        {
+            uint32_t index = 0;
+			pStmt->SetParam(index++, nStatus);
+			pStmt->SetParam(index++, nUpdateTime);
+            pStmt->SetParam(index++, nToId);
+            pStmt->SetParam(index++, nFromId);
+            pStmt->SetParam(index++, nMsgId);
+            
+            bool bRet = pStmt->ExecuteUpdate();
+            if (!bRet)
+            {
+                log("update message failed: %s nToId=[%d] nFromId=[%d] nMsgId=[%d] status=[%d] nUpdateTime=[%d] nRelateId=[%d]", 
+					strSql.c_str(),nToId,nFromId,nMsgId,nStatus,nUpdateTime,nRelateId);
+            }
+        }
+        delete pStmt;
+        pDBManager->RelDBConn(pDBConn);
+    }
+    else
+    {
+        log("no db connection for teamtalk_master");
+    }
+    
+    return bRet;
+}
+
+bool CMessageModel::updateMessageToRead(uint32_t nRelateId,uint32_t nFromId, uint32_t nToId, uint32_t nUpdateTime,uint32_t nMsgId)
+{
+    bool bRet = false;
+    
+    CDBManager* pDBManager = CDBManager::getInstance();
+    CDBConn* pDBConn = pDBManager->GetDBConn("teamtalk_master");
+    if (pDBConn)
+    {
+		string strTableName = "IMMessage_" + int2string(nRelateId % 8);
+        string strSql = "update " + strTableName + " set isRead=1,updated=? where toId=? and fromId=? and msgId<=? and isRead=0";
+
+		log("updateMessageToRead strSql=[%s]", strSql.c_str());
+        // 必须在释放连接前delete CPrepareStatement对象，否则有可能多个线程操作mysql对象，会crash
+        CPrepareStatement* pStmt = new CPrepareStatement();
+        if (pStmt->Init(pDBConn->GetMysql(), strSql))
+        {
+            uint32_t index = 0;
+			pStmt->SetParam(index++, nUpdateTime);
+            pStmt->SetParam(index++, nToId);
+            pStmt->SetParam(index++, nFromId);
+            pStmt->SetParam(index++, nMsgId);
+            
+            bool bRet = pStmt->ExecuteUpdate();
+            if (!bRet)
+            {
+                log("updateMessageToRead failed: %s nToId=[%d] nFromId=[%d] nMsgId=[%d] nUpdateTime=[%d] nRelateId=[%d]", 
+					strSql.c_str(),nToId,nFromId,nMsgId,nUpdateTime,nRelateId);
+            }
+        }
+        delete pStmt;
+        pDBManager->RelDBConn(pDBConn);
+    }
+    else
+    {
+        log("no db connection for teamtalk_master");
+    }
+    
+    return bRet;
+}
+
+
 
 bool CMessageModel::sendAudioMessage(uint32_t nRelateId, uint32_t nFromId, uint32_t nToId, IM::BaseDefine::MsgType nMsgType, uint32_t nCreateTime, uint32_t nMsgId, const char* pMsgContent, uint32_t nMsgLen)
 {

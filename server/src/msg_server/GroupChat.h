@@ -43,6 +43,10 @@ public:
     
     void HandleGroupShieldGroupResponse(CImPdu* pPdu);
     void HandleGroupGetShieldByGroupResponse(CImPdu* pPdu);
+
+	void HandleClientGroupChangeRequest(CImPdu* pPdu, CMsgConn* pFromConn);
+	void HandleGroupChangeResponse(CImPdu* pPdu);
+	void HandleGroupMsgReadResponse(CImPdu* pPdu);
 private:
 	CGroupChat() {}	// for singleton;
 

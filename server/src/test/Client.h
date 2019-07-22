@@ -37,6 +37,8 @@ public:
     uint32_t getChangedUser();
     uint32_t getUserInfo(list<uint32_t>& lsUserId);
     uint32_t sendMsg(uint32_t nToId,IM::BaseDefine::MsgType nType, const string& strMsg);
+	uint32_t addCollect(uint32_t nToId,IM::BaseDefine::MsgType nType, const string& strMsg);
+	uint32_t getCollect();
     uint32_t getUnreadMsgCnt();
     uint32_t getRecentSession();
     uint32_t getMsgList(IM::BaseDefine::SessionType nType, uint32_t nPeerId, uint32_t nMsgId, uint32_t nMsgCnt);

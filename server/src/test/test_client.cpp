@@ -23,7 +23,8 @@
 using namespace std;
 
 #define MAX_LINE_LEN	1024
-string g_login_domain = "http://access.teamtalk.im:8080";
+//string g_login_domain = "http://172.17.71.189:9080";
+string g_login_domain = "http://47.93.103.246:9080";
 string g_cmd_string[10];
 int g_cmd_num;
 CClient* g_pClient = NULL;
@@ -68,7 +69,7 @@ void doLogin(const string& strName, const string& strPass)
 {
     try
     {
-        g_pClient = new CClient(strName, strPass);
+        g_pClient = new CClient(strName, strPass,g_login_domain);
     }
     catch(...)
     {
@@ -77,6 +78,7 @@ void doLogin(const string& strName, const string& strPass)
         return;
     }
     g_pClient->connect();
+	g_pClient->login(strName,strPass);
 }
 void exec_cmd()
 {
@@ -126,6 +128,12 @@ void exec_cmd()
             printf("+---------------------+\n");
         }
     }
+	else if(strcmp(g_cmd_string[0].c_str(), "collect") == 0){
+		g_pClient->addCollect(9, IM::BaseDefine::MSG_TYPE_SINGLE_TEXT, "123");
+	}
+	else if(strcmp(g_cmd_string[0].c_str(), "getcollect") == 0){
+		g_pClient->getCollect();
+	}
     else {
 		print_help();
 	}

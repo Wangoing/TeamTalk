@@ -56,6 +56,14 @@ public:
 	long llen(string key);
 	bool lrange(string key, long start, long end, list<string>& ret_value);
 
+	//set操作
+	long sAdd(string key, string field);
+	long sAdd(string key, uint32_t field);
+	long sCard(string key);
+	long sAddInt(string key, list<uint32_t> lsIds);
+	long smembersInt(string key, list<uint32_t>& ret_value);
+	long sRemInt(string key, uint32_t field);
+
 private:
 	CachePool* 		m_pCachePool;
 	redisContext* 	m_pContext;

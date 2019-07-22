@@ -256,6 +256,13 @@ void CDBServConn::HandlePdu(CImPdu* pPdu)
         case CID_OTHER_STOP_RECV_PACKET:
             _HandleStopReceivePacket(pPdu);
             break;
+		case CID_BUDDY_CONTACT_SESSION_TOP_ACK:
+			_HandleContactSessionTopReponse(pPdu);
+			break;
+		case CID_MSG_CANCEL_NOTIFY:
+		case CID_MSG_DELETE_NOTIFY:
+            _HandleMsgUpdate(pPdu);
+            break;
         //group
         case CID_GROUP_NORMAL_LIST_RESPONSE:
             s_group_chat->HandleGroupNormalResponse( pPdu );
@@ -272,11 +279,22 @@ void CDBServConn::HandlePdu(CImPdu* pPdu)
         case CID_GROUP_SHIELD_GROUP_RESPONSE:
             s_group_chat->HandleGroupShieldGroupResponse(pPdu);
             break;
-        
+        case CID_GROUP_CHANGE_RESPONSE:
+			s_group_chat->HandleGroupChangeResponse(pPdu);
+			break;
+		case CID_GROUP_MSG_READ_RESPONSE:
+			s_group_chat->HandleGroupMsgReadResponse(pPdu);
+			break;
         case CID_FILE_HAS_OFFLINE_RES:
             s_file_handler->HandleFileHasOfflineRes(pPdu);
             break;
-        
+		//for collect
+		case CID_COLLECT_DATA:
+			_HandleCollectData(pPdu);
+            break;
+        case CID_COLLECT_LIST_RESPONSE:
+			_HandleGetCollectListResponse(pPdu);
+			break;
         default:
             log("db server, wrong cmd id=%d ", pPdu->GetCommandId());
 	}
@@ -372,6 +390,9 @@ void CDBServConn::_HandleValidateResponse(CImPdu* pPdu)
         user_info_tmp->set_user_tel(user_info.user_tel());
         user_info_tmp->set_user_domain(user_info.user_domain());
         user_info_tmp->set_status(user_info.status());
+		user_info_tmp->set_position(user_info.position());
+		user_info_tmp->set_address(user_info.address());
+		user_info_tmp->set_office_phone(user_info.office_phone());
         CImPdu pdu2;
         pdu2.SetPBMsg(&msg3);
         pdu2.SetServiceId(SID_LOGIN);
@@ -462,6 +483,30 @@ void CDBServConn::_HandleGetMsgListResponse(CImPdu *pPdu)
     }
 }
 
+void CDBServConn::_HandleGetCollectListResponse(CImPdu *pPdu)
+{
+	IM::Message::IMGetMsgListRsp msg;
+	CHECK_PB_PARSE_MSG(msg.ParseFromArray(pPdu->GetBodyData(), pPdu->GetBodyLength()));
+
+	uint32_t user_id = msg.user_id();
+	uint32_t session_type = msg.session_type();
+	uint32_t session_id = msg.session_id();
+	uint32_t msg_cnt = msg.msg_list_size();
+	uint32_t msg_id_begin = msg.msg_id_begin();
+	CDbAttachData attach_data((uchar_t*)msg.attach_data().c_str(), msg.attach_data().length());
+	uint32_t handle = attach_data.GetHandle();
+	
+	log("HandleGetCollectListResponse, userId=%u, session_type=%u, opposite_user_id=%u, msg_id_begin=%u, cnt=%u.", user_id, session_type, session_id, msg_id_begin, msg_cnt);
+	
+	CMsgConn* pMsgConn = CImUserManager::GetInstance()->GetMsgConnByHandle(user_id, handle);
+	if (pMsgConn && pMsgConn->IsOpen()) {
+		msg.clear_attach_data();
+		pPdu->SetPBMsg(&msg);
+		pMsgConn->SendPdu(pPdu);
+	}
+}
+
+
 void CDBServConn::_HandleGetMsgByIdResponse(CImPdu *pPdu)
 {
     IM::Message::IMGetMsgByIdRsp msg;
@@ -550,6 +595,69 @@ void CDBServConn::_HandleMsgData(CImPdu *pPdu)
     pdu2.SetCommandId(CID_OTHER_GET_DEVICE_TOKEN_REQ);
     SendPdu(&pdu2);
 }
+
+void CDBServConn::_HandleMsgUpdate(CImPdu *pPdu)
+{
+    IM::Message::IMMsgDataUpdate msg;
+    CHECK_PB_PARSE_MSG(msg.ParseFromArray(pPdu->GetBodyData(), pPdu->GetBodyLength()));
+
+	uint32_t from_user_id = msg.user_id();
+    uint32_t to_user_id = msg.session_id();
+	uint32_t msg_id = msg.msg_id();
+    IM::BaseDefine::SessionType nSessionType = msg.session_type();
+    
+    log("_HandleMsgUpdate, from_user_id=%u, to_user_id=%u, msg_id=%u.", from_user_id, to_user_id, msg_id);
+    
+    CRouteServConn* pRouteConn = get_route_serv_conn();
+    if (pRouteConn) {
+        pRouteConn->SendPdu(pPdu);
+    }
+
+	CDbAttachData attach_data((uchar_t*)msg.attach_data().c_str(), msg.attach_data().length());
+	uint32_t handle = attach_data.GetHandle();
+
+	//下发给请求发送用户
+	CMsgConn* pMsgConn = CImUserManager::GetInstance()->GetMsgConnByHandle(from_user_id, handle);
+    if (pMsgConn && pMsgConn->IsOpen()) {
+        msg.clear_attach_data();
+        pPdu->SetPBMsg(&msg);
+        pMsgConn->SendPdu(pPdu);
+    }
+	//如果是撤销，则需要发送给对方
+	if(pPdu->GetCommandId() == CID_MSG_CANCEL_NOTIFY){
+    CImUser* pToImUser = CImUserManager::GetInstance()->GetImUserById(to_user_id);
+	    if (pToImUser) {
+	        pToImUser->BroadcastPdu(pPdu, NULL);
+	    }
+	}
+}
+
+
+void CDBServConn::_HandleCollectData(CImPdu *pPdu)
+{
+    IM::Message::IMMsgData msg;
+    CHECK_PB_PARSE_MSG(msg.ParseFromArray(pPdu->GetBodyData(), pPdu->GetBodyLength()));
+
+	uint32_t user_id = msg.user_id();
+    uint32_t from_user_id = msg.from_user_id();
+    uint32_t to_user_id = msg.to_session_id();
+    uint32_t msg_id = msg.msg_id();
+    
+    uint8_t msg_type = msg.msg_type();
+    CDbAttachData attach_data((uchar_t*)msg.attach_data().c_str(), msg.attach_data().length());
+    uint32_t handle = attach_data.GetHandle();
+    
+    log("HandleCollectData, from_user_id=%u, to_user_id=%u, msg_id=%u.", from_user_id, to_user_id, msg_id);
+    
+    msg.clear_attach_data();
+    pPdu->SetPBMsg(&msg);
+	CMsgConn* pMsgConn = CImUserManager::GetInstance()->GetMsgConnByHandle(user_id, attach_data.GetHandle());
+	if (pMsgConn && pMsgConn->IsOpen()){
+		log("HandleCollectData sendPdu, from_user_id=%u, to_user_id=%u, msg_id=%u handle=%u.", from_user_id, to_user_id, msg_id,handle);
+		pMsgConn->SendPdu(pPdu);
+	}
+}
+
 
 void CDBServConn::_HandleGetLatestMsgIDRsp(CImPdu *pPdu)
 {
@@ -822,6 +930,30 @@ void CDBServConn::_HandleGetDeviceTokenResponse(CImPdu *pPdu)
         }
     }
 }
+
+void CDBServConn::_HandleContactSessionTopReponse(CImPdu* pPdu) {
+        IM::Buddy::IMContactSessionTopPro msg;
+        CHECK_PB_PARSE_MSG(msg.ParseFromArray(pPdu->GetBodyData(), pPdu->GetBodyLength()));
+    
+        uint32_t user_id = msg.user_id();
+    
+        log("_HandleContactSessionTopReponse: user_id=%u.", user_id);
+    
+        CDbAttachData attach_data((uchar_t*)msg.attach_data().c_str(), msg.attach_data().length());
+        uint32_t handle = attach_data.GetHandle();
+    
+        CMsgConn* pMsgConn = CImUserManager::GetInstance()->GetMsgConnByHandle(user_id, handle);
+    
+        if (pMsgConn && pMsgConn->IsOpen()) {
+        	msg.clear_attach_data();
+            pPdu->SetPBMsg(&msg);
+            pMsgConn->SendPdu(pPdu);
+        }else {
+            log("_HandleContactSessionTopReponse: can't found msg_conn by user_id = %u, handle = %u", user_id, handle);
+
+        }
+    }
+
 
 void CDBServConn::_HandleChangeSignInfoResponse(CImPdu* pPdu) {
         IM::Buddy::IMChangeSignInfoRsp msg;

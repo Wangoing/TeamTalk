@@ -19,6 +19,7 @@
 #include "business/GroupAction.h"
 #include "business/DepartAction.h"
 #include "business/FileAction.h"
+#include "business/CollectAction.h"
 #include "IM.BaseDefine.pb.h"
 
 using namespace IM::BaseDefine;
@@ -70,6 +71,7 @@ void CHandlerMap::Init()
     // recent session
     m_handler_map.insert(make_pair(uint32_t(CID_BUDDY_LIST_RECENT_CONTACT_SESSION_REQUEST), DB_PROXY::getRecentSession));
     m_handler_map.insert(make_pair(uint32_t(CID_BUDDY_LIST_REMOVE_SESSION_REQ), DB_PROXY::deleteRecentSession));
+	m_handler_map.insert(make_pair(uint32_t(CID_BUDDY_CONTACT_SESSION_TOP), DB_PROXY::updateSessionTop));
     
     // users
     m_handler_map.insert(make_pair(uint32_t(CID_BUDDY_LIST_USER_INFO_REQUEST), DB_PROXY::getUserInfo));
@@ -83,8 +85,14 @@ void CHandlerMap::Init()
     m_handler_map.insert(make_pair(uint32_t(CID_MSG_LIST_REQUEST), DB_PROXY::getMessage));
     m_handler_map.insert(make_pair(uint32_t(CID_MSG_UNREAD_CNT_REQUEST), DB_PROXY::getUnreadMsgCounter));
     m_handler_map.insert(make_pair(uint32_t(CID_MSG_READ_ACK), DB_PROXY::clearUnreadMsgCounter));
+	m_handler_map.insert(make_pair(uint32_t(CID_MSG_DELETE), DB_PROXY::deleteMessage));
+	m_handler_map.insert(make_pair(uint32_t(CID_MSG_CANCEL), DB_PROXY::cancelMessage));
     m_handler_map.insert(make_pair(uint32_t(CID_MSG_GET_BY_MSG_ID_REQ), DB_PROXY::getMessageById));
     m_handler_map.insert(make_pair(uint32_t(CID_MSG_GET_LATEST_MSG_ID_REQ), DB_PROXY::getLatestMsgId));
+
+	//collect
+	m_handler_map.insert(make_pair(uint32_t(CID_COLLECT_DATA), DB_PROXY::addCollect));
+	m_handler_map.insert(make_pair(uint32_t(CID_COLLECT_LIST_REQUEST), DB_PROXY::getCollect));
     
     // device token
     m_handler_map.insert(make_pair(uint32_t(CID_LOGIN_REQ_DEVICETOKEN), DB_PROXY::setDevicesToken));
@@ -100,6 +108,7 @@ void CHandlerMap::Init()
     m_handler_map.insert(make_pair(uint32_t(CID_GROUP_INFO_REQUEST), DB_PROXY::getGroupInfo));
     m_handler_map.insert(make_pair(uint32_t(CID_GROUP_CREATE_REQUEST), DB_PROXY::createGroup));
     m_handler_map.insert(make_pair(uint32_t(CID_GROUP_CHANGE_MEMBER_REQUEST), DB_PROXY::modifyMember));
+	m_handler_map.insert(make_pair(uint32_t(CID_GROUP_CHANGE_REQUEST), DB_PROXY::changeGroup));
 
     
     // file

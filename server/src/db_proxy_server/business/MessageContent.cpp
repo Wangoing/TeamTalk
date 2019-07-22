@@ -27,7 +27,7 @@ namespace DB_PROXY {
     void getMessage(CImPdu* pPdu, uint32_t conn_uuid)
     {
         IM::Message::IMGetMsgListReq msg;
-  if(msg.ParseFromArray(pPdu->GetBodyData(), pPdu->GetBodyLength()))
+  		if(msg.ParseFromArray(pPdu->GetBodyData(), pPdu->GetBodyLength()))
         {
             uint32_t nUserId = msg.user_id();
             uint32_t nPeerId = msg.session_id();
@@ -66,10 +66,19 @@ namespace DB_PROXY {
                     pMsg->set_create_time(it->create_time());
                     pMsg->set_msg_type(it->msg_type());
                     pMsg->set_msg_data(it->msg_data());
+					if(it->has_is_read()){
+						pMsg->set_is_read(it->is_read());
+					}
+					if(it->has_read_count()){
+						pMsg->set_read_count(it->read_count());
+					}
+					if(it->has_unread_count()){
+						pMsg->set_unread_count(it->unread_count());
+					}
 //                    log("userId=%u, peerId=%u, msgId=%u", nUserId, nPeerId, it->msg_id());
                 }
 
-                log("userId=%u, peerId=%u, msgId=%u, msgCnt=%u, count=%u", nUserId, nPeerId, nMsgId, nMsgCnt, msgResp.msg_list_size());
+                //log("userId=%u, peerId=%u, msgId=%u, msgCnt=%u, count=%u", nUserId, nPeerId, nMsgId, nMsgCnt, msgResp.msg_list_size());
                 msgResp.set_attach_data(msg.attach_data());
                 pPduResp->SetPBMsg(&msgResp);
                 pPduResp->SetSeqNum(pPdu->GetSeqNum());
@@ -99,6 +108,8 @@ namespace DB_PROXY {
             uint32_t nCreateTime = msg.create_time();
             IM::BaseDefine::MsgType nMsgType = msg.msg_type();
             uint32_t nMsgLen = msg.msg_data().length();
+			uint32_t nGroupMsgReadCount = 0;
+			uint32_t nGroupMsgUnReadCount = 0;
             
             uint32_t nNow = (uint32_t)time(NULL);
             if (IM::BaseDefine::MsgType_IsValid(nMsgType))
@@ -127,6 +138,9 @@ namespace DB_PROXY {
                                 if (nMsgId != INVALID_VALUE) {
                                     pGroupMsgModel->sendMessage(nFromId, nToId, nMsgType, nCreateTime, nMsgId, (string&)msg.msg_data());
                                     CSessionModel::getInstance()->updateSession(nSessionId, nNow);
+
+									//获取消息的已读未读数量
+									pGroupMsgModel->getReadAndUnReadByMsgId(nMsgId, nToId, nGroupMsgReadCount, nGroupMsgUnReadCount);
                                 }
                             }
                         }
@@ -151,6 +165,9 @@ namespace DB_PROXY {
                                 {
                                     pGroupMsgModel->sendAudioMessage(nFromId, nToId, nMsgType, nCreateTime, nMsgId, msg.msg_data().c_str(), nMsgLen);
                                     CSessionModel::getInstance()->updateSession(nSessionId, nNow);
+
+									//获取消息的已读未读数量
+									pGroupMsgModel->getReadAndUnReadByMsgId(nMsgId, nToId, nGroupMsgReadCount, nGroupMsgUnReadCount);
                                 }
                             }
                         }
@@ -234,6 +251,8 @@ namespace DB_PROXY {
                     log("fromId=%u, toId=%u, type=%u, msgId=%u, sessionId=%u", nFromId, nToId, nMsgType, nMsgId, nSessionId);
 
                     msg.set_msg_id(nMsgId);
+					msg.set_read_count(nGroupMsgReadCount);
+					msg.set_unread_count(nGroupMsgUnReadCount);
                     pPduResp->SetPBMsg(&msg);
                     pPduResp->SetSeqNum(pPdu->GetSeqNum());
                     pPduResp->SetServiceId(IM::BaseDefine::SID_MSG);
@@ -249,6 +268,112 @@ namespace DB_PROXY {
             {
                 log("invalid msgType.fromId=%u, toId=%u, msgType=%u", nFromId, nToId, nMsgType);
             }
+        }
+        else
+        {
+            log("parse pb failed");
+        }
+    }
+
+	void deleteMessage(CImPdu* pPdu, uint32_t conn_uuid)
+    {
+    	bool bRet = false;
+        IM::Message::IMMsgDataUpdate msg;
+        if(msg.ParseFromArray(pPdu->GetBodyData(), pPdu->GetBodyLength()))
+        {
+            uint32_t nFromId = msg.user_id();
+            uint32_t nToId = msg.session_id();
+			uint32_t nMsgId = msg.msg_id();
+            IM::BaseDefine::SessionType nSessionType = msg.session_type();
+            
+            uint32_t nNow = (uint32_t)time(NULL);
+			CImPdu* pPduResp = new CImPdu;
+
+			CMessageModel* pMsgModel = CMessageModel::getInstance();
+            CGroupMessageModel* pGroupMsgModel = CGroupMessageModel::getInstance();
+			
+			if(nSessionType == IM::BaseDefine::SessionType::SESSION_TYPE_GROUP){
+				bRet = pGroupMsgModel->updateMessageStatus(nFromId, nToId, nNow, nMsgId, 1);
+				if(bRet){
+					msg.set_result_code(0);
+				}else{
+					msg.set_result_code(1);
+				}
+			}else if(nSessionType == IM::BaseDefine::SessionType::SESSION_TYPE_SINGLE){				
+                uint32_t nRelateId = CRelationModel::getInstance()->getRelationId(nFromId, nToId, true);
+                if(nRelateId != INVALID_VALUE)
+                {
+	                bRet = pMsgModel->updateMessageStatus(nRelateId, nFromId, nToId, nNow, nMsgId, 1);
+					if(bRet){
+						msg.set_result_code(0);
+					}else{
+						msg.set_result_code(1);
+					}
+                }
+                else{
+                    log("sessionId or relateId is invalid. fromId=%u, toId=%u, nRelateId=%u", nFromId, nToId, nRelateId);
+                }
+			}else{
+				log("invalid nSessionType.fromId=%u, toId=%u, msgType=%u", nFromId, nToId, nSessionType);
+			}
+			pPduResp->SetPBMsg(&msg);
+            pPduResp->SetSeqNum(pPdu->GetSeqNum());
+            pPduResp->SetServiceId(IM::BaseDefine::SID_MSG);
+            pPduResp->SetCommandId(IM::BaseDefine::CID_MSG_DELETE_NOTIFY);
+            CProxyConn::AddResponsePdu(conn_uuid, pPduResp);
+        }
+        else
+        {
+            log("parse pb failed");
+        }
+    }
+
+	void cancelMessage(CImPdu* pPdu, uint32_t conn_uuid)
+    {
+    	bool bRet = false;
+        IM::Message::IMMsgDataUpdate msg;
+        if(msg.ParseFromArray(pPdu->GetBodyData(), pPdu->GetBodyLength()))
+        {
+            uint32_t nFromId = msg.user_id();
+            uint32_t nToId = msg.session_id();
+			uint32_t nMsgId = msg.msg_id();
+            IM::BaseDefine::SessionType nSessionType = msg.session_type();
+            
+            uint32_t nNow = (uint32_t)time(NULL);
+			CImPdu* pPduResp = new CImPdu;
+
+			CMessageModel* pMsgModel = CMessageModel::getInstance();
+            CGroupMessageModel* pGroupMsgModel = CGroupMessageModel::getInstance();
+			
+			if(nSessionType == IM::BaseDefine::SessionType::SESSION_TYPE_GROUP){
+				bRet = pGroupMsgModel->updateMessageStatus(nFromId, nToId, nNow, nMsgId, 2);
+				if(bRet){
+					msg.set_result_code(0);
+				}else{
+					msg.set_result_code(1);
+				}
+			}else if(nSessionType == IM::BaseDefine::SessionType::SESSION_TYPE_SINGLE){
+                uint32_t nRelateId = CRelationModel::getInstance()->getRelationId(nFromId, nToId, true);
+                if(nRelateId != INVALID_VALUE)
+                {
+	                bRet = pMsgModel->updateMessageStatus(nRelateId, nFromId, nToId, nNow, nMsgId, 2);
+					if(bRet){
+						msg.set_result_code(0);
+					}else{
+						msg.set_result_code(1);
+					}
+                }
+                else{
+                    log("sessionId or relateId is invalid. fromId=%u, toId=%u, nRelateId=%u", nFromId, nToId, nRelateId);
+                }
+			}else{
+				log("invalid nSessionType.fromId=%u, toId=%u, msgType=%u", nFromId, nToId, nSessionType);
+			}
+			pPduResp->SetPBMsg(&msg);
+            pPduResp->SetSeqNum(pPdu->GetSeqNum());
+            pPduResp->SetServiceId(IM::BaseDefine::SID_MSG);
+            pPduResp->SetCommandId(IM::BaseDefine::CID_MSG_CANCEL_NOTIFY);
+            CProxyConn::AddResponsePdu(conn_uuid, pPduResp);
         }
         else
         {

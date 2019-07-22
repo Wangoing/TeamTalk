@@ -79,9 +79,13 @@ bool CGroupMessageModel::sendMessage(uint32_t nFromId, uint32_t nGroupId, IM::Ba
         CDBConn* pDBConn = pDBManager->GetDBConn("teamtalk_master");
         if (pDBConn)
         {
+        	//获取群众成员的明细
+        	list<uint32_t> lsUserIds;
+			CGroupModel::getInstance()->getGroupUser(nGroupId,lsUserIds);
+			
             string strTableName = "IMGroupMessage_" + int2string(nGroupId % 8);
-            string strSql = "insert into " + strTableName + " (`groupId`, `userId`, `msgId`, `content`, `type`, `status`, `updated`, `created`) "\
-            "values(?, ?, ?, ?, ?, ?, ?, ?)";
+            string strSql = "insert into " + strTableName + " (`groupId`, `userId`, `msgId`, `content`, `type`, `status`, `updated`, `created`, `readCount`, `unreadCount`, `isAllRead`) "\
+            "values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
             
             // 必须在释放连接前delete CPrepareStatement对象，否则有可能多个线程操作mysql对象，会crash
             CPrepareStatement* pStmt = new CPrepareStatement();
@@ -90,6 +94,9 @@ bool CGroupMessageModel::sendMessage(uint32_t nFromId, uint32_t nGroupId, IM::Ba
                 uint32_t nStatus = 0;
                 uint32_t nType = nMsgType;
                 uint32_t index = 0;
+				uint32_t userIdSize = lsUserIds.size();
+				uint32_t readCount =0;
+				uint32_t isReadAll = 0;
                 pStmt->SetParam(index++, nGroupId);
                 pStmt->SetParam(index++, nFromId);
                 pStmt->SetParam(index++, nMsgId);
@@ -98,6 +105,9 @@ bool CGroupMessageModel::sendMessage(uint32_t nFromId, uint32_t nGroupId, IM::Ba
                 pStmt->SetParam(index++, nStatus);
                 pStmt->SetParam(index++, nCreateTime);
                 pStmt->SetParam(index++, nCreateTime);
+				pStmt->SetParam(index++, readCount);
+				pStmt->SetParam(index++, userIdSize);
+				pStmt->SetParam(index++, isReadAll);
                 
                 bool bRet = pStmt->ExecuteUpdate();
                 if (bRet)
@@ -105,8 +115,64 @@ bool CGroupMessageModel::sendMessage(uint32_t nFromId, uint32_t nGroupId, IM::Ba
                     CGroupModel::getInstance()->updateGroupChat(nGroupId);
                     incMessageCount(nFromId, nGroupId);
                     clearMessageCount(nFromId, nGroupId);
+					incMessageReadCount(nFromId,nGroupId,nMsgId,lsUserIds);
                 } else {
                     log("insert message failed: %s", strSql.c_str());
+                }
+            }
+            delete pStmt;
+            pDBManager->RelDBConn(pDBConn);
+        }
+        else
+        {
+            log("no db connection for teamtalk_master");
+        }
+    }
+    else
+    {
+        log("not in the group.fromId=%u, groupId=%u", nFromId, nGroupId);
+    }
+    return bRet;
+}
+
+/**
+ *  修改群消息状态接口
+ *
+ *  @param nFromId       发送者Id
+ *  @param nGroupId      群组Id
+ *  @param nUpdateTime   消息修改时间
+ *  @param nMsgId        消息Id
+ *  @param nStatus		 消息状态 1-删除 2-撤销
+ *
+ *  @return 成功返回true 失败返回false
+ */
+bool CGroupMessageModel::updateMessageStatus(uint32_t nFromId, uint32_t nGroupId, uint32_t nUpdateTime,uint32_t nMsgId, uint32_t nStatus)
+{
+    bool bRet = false;
+    if(CGroupModel::getInstance()->isInGroup(nFromId, nGroupId))
+    {
+        CDBManager* pDBManager = CDBManager::getInstance();
+        CDBConn* pDBConn = pDBManager->GetDBConn("teamtalk_master");
+        if (pDBConn)
+        {
+            string strTableName = "IMGroupMessage_" + int2string(nGroupId % 8);
+            string strSql = "update " + strTableName + " set status=?,updated=? where groupId=? and userId=? and msgId=?";
+            
+            // 必须在释放连接前delete CPrepareStatement对象，否则有可能多个线程操作mysql对象，会crash
+            CPrepareStatement* pStmt = new CPrepareStatement();
+            if (pStmt->Init(pDBConn->GetMysql(), strSql))
+            {
+                uint32_t index = 0;
+				pStmt->SetParam(index++, nStatus);
+				pStmt->SetParam(index++, nUpdateTime);
+                pStmt->SetParam(index++, nGroupId);
+                pStmt->SetParam(index++, nFromId);
+                pStmt->SetParam(index++, nMsgId);
+                
+                bool bRet = pStmt->ExecuteUpdate();
+                if (!bRet)
+                {
+                    log("update message failed: %s", strSql.c_str());
                 }
             }
             delete pStmt;
@@ -254,6 +320,159 @@ bool CGroupMessageModel::incMessageCount(uint32_t nUserId, uint32_t nGroupId)
 }
 
 /**
+ *  获取群的某条消息已读未读数量
+ *
+ *  @param nUserId   用户Id
+ *  @param nReadCnt 已读,引用
+ *  @param nUnReadCnt 未读已读,引用
+ */
+void CGroupMessageModel::getReadAndUnReadByMsgId(uint32_t nMsgId, uint32_t nGroupId, uint32_t &nReadCnt,  uint32_t &nUnReadCnt)
+{
+	string strGroupMsgReadKey = int2string(nGroupId) + "_" + int2string(nMsgId) + "_" + "ReadCount";
+	string strGroupMsgUnReadKey = int2string(nGroupId) + "_" + int2string(nMsgId) + "_" + "UnReadCount";
+
+	
+    CacheManager* pCacheManager = CacheManager::getInstance();
+    CacheConn* pCacheConn = pCacheManager->GetCacheConn("unread");
+    if (pCacheConn)
+    {
+        string strReadCnt = pCacheConn->hget(strGroupMsgReadKey, GROUP_COUNTER_SUBKEY_COUNTER_FIELD);
+		string strUnReadCnt = pCacheConn->hget(strGroupMsgUnReadKey, GROUP_COUNTER_SUBKEY_COUNTER_FIELD);
+        
+        
+        nReadCnt = ( strReadCnt.empty() ? 0 : ((uint32_t)atoi(strReadCnt.c_str())) );
+		nUnReadCnt = ( strUnReadCnt.empty() ? 0 : ((uint32_t)atoi(strUnReadCnt.c_str())) );
+        
+        pCacheManager->RelCacheConn(pCacheConn);
+    }
+    else
+    {
+        log("no cache connection for unread");
+    }
+}
+
+
+/**
+ *  增加群消息已读未读计数
+ *
+ *  @param nUserId  用户Id
+ *  @param nGroupId 群组Id
+ *  @param nMsgId 	消息Id
+ *  @param lsUserId 群成员Id
+ *
+ *  @return 成功返回true，失败返回false
+ */
+bool CGroupMessageModel::incMessageReadCount(uint32_t nUserId, uint32_t nGroupId, uint32_t nMsgId, list<uint32_t> &lsUserId)
+{
+    bool bRet = false;
+    CacheManager* pCacheManager = CacheManager::getInstance();
+    CacheConn* pCacheConn = pCacheManager->GetCacheConn("unread");
+    if (pCacheConn)
+    {
+        string strGroupMsgReadKey = int2string(nGroupId) + "_" + int2string(nMsgId) + "_" + "ReadCount";
+		string strGroupMsgUnReadKey = int2string(nGroupId) + "_" + int2string(nMsgId) + "_" + "UnReadCount";
+		string strGroupMsgUnReadUserListKey = int2string(nGroupId) + "_" + int2string(nMsgId) + "_" + "UnReadUser";
+		string strUserGroupMsgUnReadKey = int2string(nGroupId) + "_" + int2string(nUserId) + "_UserUnReadMsg";
+		//群组消息的已读数量
+        pCacheConn->hincrBy(strGroupMsgReadKey, GROUP_COUNTER_SUBKEY_COUNTER_FIELD, 0);
+		//群组消息的未读数量
+		pCacheConn->hincrBy(strGroupMsgUnReadKey, GROUP_COUNTER_SUBKEY_COUNTER_FIELD, lsUserId.size() - 1);
+		//将群组消息的待读用户list存入redis
+		pCacheConn->sAddInt(strGroupMsgUnReadUserListKey, lsUserId);
+		//因为是讲全部的用户都加入到了未读，在此去掉自己
+		pCacheConn->sRemInt(strGroupMsgUnReadUserListKey, nUserId);
+		//将群里用户待读的msg_id存入redis
+		for(auto it=lsUserId.begin(); it!=lsUserId.end(); ++it)
+	    {
+	        uint32_t nGroupMemId=*it;
+	        strUserGroupMsgUnReadKey = int2string(nGroupId) + "_" + int2string(nGroupMemId) + "_UserUnReadMsg";
+	        pCacheConn->sAdd(strUserGroupMsgUnReadKey, nMsgId);
+	    }
+		
+		long len = pCacheConn->sCard(strGroupMsgUnReadUserListKey);
+		long len1 = pCacheConn->sCard(strUserGroupMsgUnReadKey);
+		log("incMessageReadCount strGroupMsgUnReadUserListKey[%s] userIds len = [%u] , strUserGroupMsgUnReadKey[%s] len = [%u] ",
+			strGroupMsgUnReadUserListKey.c_str(), len, strUserGroupMsgUnReadKey.c_str(), len1);
+        pCacheManager->RelCacheConn(pCacheConn);
+		bRet = true;
+    }
+    else
+    {
+        log("no cache connection for unread");
+    }
+    return bRet;
+}
+
+/**
+ *  用户读取群消息已读未读计数
+ *
+ *  @param nUserId  用户Id
+ *  @param nGroupId 群组Id
+ *  @param nMsgId 	消息Id
+ *
+ *  @return 成功返回true，失败返回false
+ */
+bool CGroupMessageModel::groupMessageRead(uint32_t nUserId, uint32_t nGroupId, uint32_t nLastMsgId)
+{
+    bool bRet = false;
+    CacheManager* pCacheManager = CacheManager::getInstance();
+    CacheConn* pCacheConn = pCacheManager->GetCacheConn("unread");
+    if (pCacheConn)
+    {
+    	string strUserGroupMsgUnReadKey = int2string(nGroupId) + "_" + int2string(nUserId) + "_UserUnReadMsg";
+    	//因为进入一个群之后，无论有多少未读消息，都只传递最后一个消息的id，所以，需要先取出用户针对该群所有的未读消息，循环处理每一条消息
+    	list<uint32_t> lsMsgId;
+		pCacheConn->smembersInt(strUserGroupMsgUnReadKey, lsMsgId);
+		uint32_t lsMsgIdCnt = lsMsgId.size();
+		log("lsMsgIdCnt=%d, strUserGroupMsgUnReadKey=%s", lsMsgIdCnt, strUserGroupMsgUnReadKey.c_str());
+		//如果redis中有值，再进行处理
+		if(lsMsgIdCnt > 0)
+		{
+			for(auto it=lsMsgId.begin(); it!=lsMsgId.end(); ++it){
+				uint32_t nUnReadMsgId = *it;
+				log("nUnReadMsgId=%u, nLastMsgId=%d",nUnReadMsgId, nLastMsgId);
+				//如果未读的消息id小于最后一条消息id，证明这条消息时间更早，需要做已读处理s
+				if(nUnReadMsgId < nLastMsgId)
+				{
+					string strGroupMsgReadKey = int2string(nGroupId) + "_" + int2string(nUnReadMsgId) + "_" + "ReadCount";
+					string strGroupMsgUnReadKey = int2string(nGroupId) + "_" + int2string(nUnReadMsgId) + "_" + "UnReadCount";
+					string strGroupMsgUnReadUserListKey = int2string(nGroupId) + "_" + int2string(nUnReadMsgId) + "_" + "UnReadUser";
+					long len = pCacheConn->sCard(strGroupMsgUnReadUserListKey);
+					
+					//直接更新这条消息id对应的用户列表，如果更新到了证明这个用户的确未读这条消息，如果未更新到，证明之前已经读取了，不做处理
+					long lRet = pCacheConn->sRemInt(strGroupMsgUnReadUserListKey, nUserId);
+					log("groupMessageRead strGroupMsgUnReadUserListKey[%s] len = [%u] sRemInt result=[%u] nUserId=[%d]", 
+						strGroupMsgUnReadUserListKey.c_str(), len, lRet, nUserId);
+					//返回值为1，证明set中有此值，返回值为0，证明set中无此值
+					if(lRet != 0)
+					{
+						//群组消息的已读数量 + 1
+				        pCacheConn->hincrBy(strGroupMsgReadKey, GROUP_COUNTER_SUBKEY_COUNTER_FIELD, 1);
+						//群组消息的未读数量 - 1
+						pCacheConn->hincrBy(strGroupMsgUnReadKey, GROUP_COUNTER_SUBKEY_COUNTER_FIELD,  -1);					
+					}
+					//将某一用户待读的msg_id从redis中清除
+					pCacheConn->sRemInt(strUserGroupMsgUnReadKey, nUnReadMsgId);	
+				}
+			}
+		}
+		
+		
+		long len1 = pCacheConn->sCard(strUserGroupMsgUnReadKey);
+		log("groupMessageRead strUserGroupMsgUnReadKey[%s] len = [%u] ", strUserGroupMsgUnReadKey.c_str(), len1);
+        pCacheManager->RelCacheConn(pCacheConn);
+		bRet = true;
+    }
+    else
+    {
+        log("no cache connection for unread");
+    }
+    return bRet;
+}
+
+
+
+/**
  *  获取群组消息列表
  *
  *  @param nUserId  用户Id
@@ -287,7 +506,7 @@ void CGroupMessageModel::getMessage(uint32_t nUserId, uint32_t nGroupId, uint32_
             map<uint32_t, IM::BaseDefine::MsgInfo> mapAudioMsg;
             while(pResultSet->Next())
             {
-                IM::BaseDefine::MsgInfo msg;
+                IM::BaseDefine::MsgInfo msg; 
                 msg.set_msg_id(pResultSet->GetInt("msgId"));
                 msg.set_from_session_id(pResultSet->GetInt("userId"));
                 msg.set_create_time(pResultSet->GetInt("created"));
@@ -296,6 +515,11 @@ void CGroupMessageModel::getMessage(uint32_t nUserId, uint32_t nGroupId, uint32_
                 {
                     msg.set_msg_type(nMsgType);
                     msg.set_msg_data(pResultSet->GetString("content"));
+					uint32_t nMsgRead = 0;
+					uint32_t nMsgUnRead = 0;
+					getReadAndUnReadByMsgId(pResultSet->GetInt("msgId"), nGroupId, nMsgRead, nMsgUnRead);
+					msg.set_read_count(nMsgRead);
+					msg.set_unread_count(nMsgUnRead);
                     lsMsg.push_back(msg);
                 }
                 else

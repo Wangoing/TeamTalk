@@ -80,7 +80,7 @@ uint32_t CGroupModel::createGroup(uint32_t nUserId, const string& strGroupName, 
         
         //insert IMGroupMember
         clearGroupMember(nGroupId);
-        insertNewMember(nGroupId, setMember);
+        insertNewMember(nGroupId, setMember, nUserId);
         
     } while (false);
     
@@ -147,6 +147,45 @@ void CGroupModel::getUserGroup(uint32_t nUserId, list<IM::BaseDefine::GroupVersi
     }
 }
 
+bool CGroupModel::getGroupInfoByGroupId(uint32_t nGroupId, IM::BaseDefine::GroupInfo& cGroupInfo)
+{
+	bool bRet = false;
+
+	CDBManager* pDBManager = CDBManager::getInstance();
+	CDBConn* pDBConn = pDBManager->GetDBConn("teamtalk_slave");
+	if (pDBConn)
+	{
+		string strSql = "select * from IMGroup where id = " + int2string(nGroupId) ;
+		CResultSet* pResultSet = pDBConn->ExecuteQuery(strSql.c_str());
+		if(pResultSet)
+        {
+            while (pResultSet->Next())
+            {
+                cGroupInfo.set_group_id(pResultSet->GetInt("id"));
+                cGroupInfo.set_version(pResultSet->GetInt("version"));
+                cGroupInfo.set_group_name(pResultSet->GetString("name"));
+                cGroupInfo.set_group_avatar(pResultSet->GetString("avatar"));
+                cGroupInfo.set_group_creator_id(pResultSet->GetInt("creator"));
+				cGroupInfo.set_group_type(IM::BaseDefine::GroupType(pResultSet->GetInt("type")));
+                cGroupInfo.set_group_join_type(IM::BaseDefine::GroupJoinType(pResultSet->GetInt("joinType")));
+				cGroupInfo.set_group_join_check_type(IM::BaseDefine::GroupJoinCheckType(pResultSet->GetInt("joinCheckType")));
+				cGroupInfo.set_group_update_type(IM::BaseDefine::GroupUpdateType(pResultSet->GetInt("updateType")));
+				cGroupInfo.set_group_notice(pResultSet->GetString("notice"));
+                bRet = true;
+            }
+            delete pResultSet;
+        }
+        else
+        {
+            log("no result set for sql:%s", strSql.c_str());
+        }
+	}
+	else
+	{
+		log("getGroupInfoByGroupId no db connection for teamtalk_slave");
+	}
+	return bRet;
+}
 
 void CGroupModel::getGroupInfo(map<uint32_t,IM::BaseDefine::GroupVersionInfo>& mapGroupId, list<IM::BaseDefine::GroupInfo>& lsGroupInfo)
 { 
@@ -184,7 +223,14 @@ void CGroupModel::getGroupInfo(map<uint32_t,IM::BaseDefine::GroupVersionInfo>& m
                         cGroupInfo.set_version(nVersion);
                         cGroupInfo.set_group_name(pResultSet->GetString("name"));
                         cGroupInfo.set_group_avatar(pResultSet->GetString("avatar"));
+						IM::BaseDefine::GroupJoinType nGroupJoinType = IM::BaseDefine::GroupJoinType(pResultSet->GetInt("joinType"));
+						cGroupInfo.set_group_join_type(nGroupJoinType);
+						IM::BaseDefine::GroupJoinCheckType nGroupJoinCheckType = IM::BaseDefine::GroupJoinCheckType(pResultSet->GetInt("joinCheckType"));
+						cGroupInfo.set_group_join_check_type(nGroupJoinCheckType);
+						IM::BaseDefine::GroupUpdateType nGroupUpdateType = IM::BaseDefine::GroupUpdateType(pResultSet->GetInt("updateType"));
+						cGroupInfo.set_group_update_type(nGroupUpdateType);
                         IM::BaseDefine::GroupType nGroupType = IM::BaseDefine::GroupType(pResultSet->GetInt("type"));
+						cGroupInfo.set_group_notice(pResultSet->GetString("notice"));
                         if(IM::BaseDefine::GroupType_IsValid(nGroupType))
                         {
                             cGroupInfo.set_group_type(nGroupType);
@@ -298,7 +344,7 @@ bool CGroupModel::insertNewGroup(uint32_t nUserId, const string& strGroupName, c
     return bRet;
 }
 
-bool CGroupModel::insertNewMember(uint32_t nGroupId, set<uint32_t>& setUsers)
+bool CGroupModel::insertNewMember(uint32_t nGroupId, set<uint32_t>& setUsers, uint32_t nCreateUser)
 {
     bool bRet = false;
     uint32_t nUserCnt = (uint32_t)setUsers.size();
@@ -367,8 +413,8 @@ bool CGroupModel::insertNewMember(uint32_t nGroupId, set<uint32_t>& setUsers)
                         strSql = "update IMGroupMember set status=0, updated="+int2string(nCreated)+" where groupId=" + int2string(nGroupId) + " and userId in (" + strClause + ")";
                         pDBConn->ExecuteUpdate(strSql.c_str());
                     }
-                    strSql = "insert into IMGroupMember(`groupId`, `userId`, `status`, `created`, `updated`) values\
-                    (?,?,?,?,?)";
+                    strSql = "insert into IMGroupMember(`groupId`, `userId`, `status`, `created`, `updated`, `memType`) values\
+                    (?,?,?,?,?,?)";
                     
                     //插入新成员
                     auto it = setUsers.begin();
@@ -383,11 +429,17 @@ bool CGroupModel::insertNewMember(uint32_t nGroupId, set<uint32_t>& setUsers)
                             if (pStmt->Init(pDBConn->GetMysql(), strSql))
                             {
                                 uint32_t index = 0;
+								uint32_t memType = 0;
                                 pStmt->SetParam(index++, nGroupId);
                                 pStmt->SetParam(index++, nUserId);
                                 pStmt->SetParam(index++, nStatus);
                                 pStmt->SetParam(index++, nCreated);
                                 pStmt->SetParam(index++, nCreated);
+								//如果是群主，则成员类型为2
+								if(nCreateUser == nUserId){
+									memType = 2;
+								}
+								pStmt->SetParam(index++, memType);
                                 pStmt->ExecuteUpdate();
                                 ++nIncMemberCnt;
                                 delete pStmt;
@@ -609,7 +661,8 @@ bool CGroupModel::addMember(uint32_t nGroupId, set<uint32_t> &setUser, list<uint
 {
     // 去掉已经存在的用户ID
     removeRepeatUser(nGroupId, setUser);
-    bool bRet = insertNewMember(nGroupId, setUser);
+	//只有在创建群的时候，才可能有添加群主的操作，其余，都应该是添加普通成员
+    bool bRet = insertNewMember(nGroupId, setUser, 0);
     getGroupUser(nGroupId,lsCurUserId);
     return bRet;
 }
@@ -815,6 +868,36 @@ void CGroupModel::updateGroupChat(uint32_t nGroupId)
         log("no db connection for teamtalk_master");
     }
 }
+
+bool CGroupModel::updateGroupInfo(uint32_t nGroupId, uint32_t nGroupJoinType, uint32_t nGroupJoinCheckType, uint32_t nGroupUpdateType, const string& strGroupName, 
+										const string& strGroupNotice)
+{
+	bool bRet = false;
+
+    CDBManager* pDBManager = CDBManager::getInstance();
+    CDBConn* pDBConn = pDBManager->GetDBConn("teamtalk_master");
+    if(pDBConn)
+    {
+        uint32_t nNow = (uint32_t)time(NULL);
+        string strSql = "update IMGroup set updated=" + int2string(nNow) + ",name='" +strGroupName.c_str()+"',joinType=" +int2string(nGroupJoinType)+
+			",joinCheckType=" +int2string(nGroupJoinCheckType)+",updateType=" +int2string(nGroupUpdateType)+",notice='" + strGroupNotice.c_str()+
+			"' where id=" + int2string(nGroupId);
+		log("updateGroupInfo sql=[%s]",strSql.c_str());
+        if(pDBConn->ExecuteUpdate(strSql.c_str()))
+        {
+        	bool bRet = true;
+        	//如果修改成功，更新群组版本号
+        	incGroupVersion(nGroupId);
+        }
+        pDBManager->RelDBConn(pDBConn);
+    }
+    else
+    {
+        log("no db connection for teamtalk_master");
+    }
+	return bRet;
+}
+
 
 //bool CGroupModel::isValidateGroupId(uint32_t nGroupId)
 //{

@@ -31,9 +31,9 @@ void CSessionModel::getRecentSession(uint32_t nUserId, uint32_t lastTime, list<I
     CDBConn* pDBConn = pDBManager->GetDBConn("teamtalk_slave");
     if (pDBConn)
     {
-        string strSql = "select * from IMRecentSession where userId = " + int2string(nUserId) + " and status = 0 and updated >" + int2string(lastTime) + " order by updated desc limit 100";
-        
-        CResultSet* pResultSet = pDBConn->ExecuteQuery(strSql.c_str());
+        string strSql = "select * from IMRecentSession where userId = " + int2string(nUserId) + " and status = 0 and updated >" + int2string(lastTime) + " order by isTop desc ,updated desc limit 100";
+		log("getRecentSession strSql = [%s]",strSql.c_str());
+		CResultSet* pResultSet = pDBConn->ExecuteQuery(strSql.c_str());
         if (pResultSet)
         {
             while (pResultSet->Next())
@@ -42,6 +42,7 @@ void CSessionModel::getRecentSession(uint32_t nUserId, uint32_t lastTime, list<I
                 uint32_t nPeerId = pResultSet->GetInt("peerId");
                 cRelate.set_session_id(nPeerId);
                 cRelate.set_session_status(::IM::BaseDefine::SessionStatusType(pResultSet->GetInt("status")));
+				cRelate.set_is_top(pResultSet->GetInt("isTop"));
                 
                 IM::BaseDefine::SessionType nSessionType = IM::BaseDefine::SessionType(pResultSet->GetInt("type"));
                 if(IM::BaseDefine::SessionType_IsValid(nSessionType))
@@ -123,6 +124,25 @@ bool CSessionModel::updateSession(uint32_t nSessionId, uint32_t nUpdateTime)
     }
     return bRet;
 }
+
+bool CSessionModel::updateSessionTop(uint32_t nSessionId, uint32_t nIsTop, uint32_t nUpdateTime)
+{
+    bool bRet = false;
+    CDBManager* pDBManager = CDBManager::getInstance();
+    CDBConn* pDBConn = pDBManager->GetDBConn("teamtalk_master");
+    if (pDBConn)
+    {
+        string strSql = "update IMRecentSession set `topUpdated`="+int2string(nUpdateTime) + ",`isTop`="+int2string(nIsTop)+" where id="+int2string(nSessionId);
+        bRet = pDBConn->ExecuteUpdate(strSql.c_str());
+        pDBManager->RelDBConn(pDBConn);
+    }
+    else
+    {
+        log("no db connection for teamtalk_master");
+    }
+    return bRet;
+}
+
 
 bool CSessionModel::removeSession(uint32_t nSessionId)
 {

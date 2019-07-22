@@ -51,6 +51,7 @@ namespace DB_PROXY {
             {
                 IM::BaseDefine::ContactSessionInfo* pContact = msgResp.add_contact_session_list();
     //            *pContact = *it;
+    			//log("getRecentSession session_id=[%u] userid=[%d] is_top=[%u]",it->session_id(),nUserId,it->is_top());
                 pContact->set_session_id(it->session_id());
                 pContact->set_session_type(it->session_type());
                 pContact->set_session_status(it->session_status());
@@ -59,6 +60,7 @@ namespace DB_PROXY {
                 pContact->set_latest_msg_data(it->latest_msg_data());
                 pContact->set_latest_msg_type(it->latest_msg_type());
                 pContact->set_latest_msg_from_user_id(it->latest_msg_from_user_id());
+				pContact->set_is_top(it->is_top());
             }
             
             log("userId=%u, last_time=%u, count=%u", nUserId, nLastTime, msgResp.contact_session_list_size());
@@ -117,6 +119,51 @@ namespace DB_PROXY {
                 pPduResp->SetSeqNum(pPdu->GetSeqNum());
                 pPduResp->SetServiceId(IM::BaseDefine::SID_BUDDY_LIST);
                 pPduResp->SetCommandId(IM::BaseDefine::CID_BUDDY_LIST_REMOVE_SESSION_RES);
+                CProxyConn::AddResponsePdu(conn_uuid, pPduResp);
+            }
+            else
+            {
+                log("invalied session_type. userId=%u, peerId=%u, seseionType=%u", nUserId, nPeerId, nType);
+            }
+        }
+        else{
+            log("parse pb failed");
+        }
+    }
+
+	/**
+     *  会话置顶取消置顶接口
+     *
+     *  @param pPdu      收到的packet包指针
+     *  @param conn_uuid 该包过来的socket 描述符
+     */
+    void updateSessionTop(CImPdu* pPdu, uint32_t conn_uuid)
+    {
+        IM::Buddy::IMContactSessionTopPro msg;
+        
+        if(msg.ParseFromArray(pPdu->GetBodyData(), pPdu->GetBodyLength()))
+        {            
+        	CImPdu* pPduResp = new CImPdu;
+			
+            uint32_t nUserId = msg.user_id();
+            uint32_t nPeerId = msg.session_id();
+            IM::BaseDefine::SessionType nType = msg.session_type();
+			uint32_t nUpdateTime = msg.update_time();
+			uint32_t nIsTop = msg.is_top();
+            if(IM::BaseDefine::SessionType_IsValid(nType))
+            {
+                bool bRet = false;
+				
+                uint32_t nSessionId = CSessionModel::getInstance()->getSessionId(nUserId, nPeerId, nType, false);
+                if (nSessionId != INVALID_VALUE) {
+                    bRet = CSessionModel::getInstance()->updateSessionTop(nSessionId,nIsTop,nUpdateTime);
+                }
+                log("userId=%d, peerId=%d, result=%s", nUserId, nPeerId, bRet?"success":"failed");
+
+				pPduResp->SetPBMsg(&msg);
+                pPduResp->SetSeqNum(pPdu->GetSeqNum());
+                pPduResp->SetServiceId(IM::BaseDefine::SID_BUDDY_LIST);
+                pPduResp->SetCommandId(IM::BaseDefine::CID_BUDDY_CONTACT_SESSION_TOP_ACK);
                 CProxyConn::AddResponsePdu(conn_uuid, pPduResp);
             }
             else

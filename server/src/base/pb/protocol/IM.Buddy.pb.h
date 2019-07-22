@@ -55,6 +55,7 @@ class IMAvatarChangedNotify;
 class IMChangeSignInfoReq;
 class IMChangeSignInfoRsp;
 class IMSignInfoChangedNotify;
+class IMContactSessionTopPro;
 
 // ===================================================================
 
@@ -2524,6 +2525,152 @@ class IMSignInfoChangedNotify : public ::google::protobuf::MessageLite {
 
   void InitAsDefaultInstance();
   static IMSignInfoChangedNotify* default_instance_;
+};
+// -------------------------------------------------------------------
+
+class IMContactSessionTopPro : public ::google::protobuf::MessageLite {
+ public:
+  IMContactSessionTopPro();
+  virtual ~IMContactSessionTopPro();
+
+  IMContactSessionTopPro(const IMContactSessionTopPro& from);
+
+  inline IMContactSessionTopPro& operator=(const IMContactSessionTopPro& from) {
+    CopyFrom(from);
+    return *this;
+  }
+
+  inline const ::std::string& unknown_fields() const {
+    return _unknown_fields_;
+  }
+
+  inline ::std::string* mutable_unknown_fields() {
+    return &_unknown_fields_;
+  }
+
+  static const IMContactSessionTopPro& default_instance();
+
+  #ifdef GOOGLE_PROTOBUF_NO_STATIC_INITIALIZER
+  // Returns the internal default instance pointer. This function can
+  // return NULL thus should not be used by the user. This is intended
+  // for Protobuf internal code. Please use default_instance() declared
+  // above instead.
+  static inline const IMContactSessionTopPro* internal_default_instance() {
+    return default_instance_;
+  }
+  #endif
+
+  void Swap(IMContactSessionTopPro* other);
+
+  // implements Message ----------------------------------------------
+
+  IMContactSessionTopPro* New() const;
+  void CheckTypeAndMergeFrom(const ::google::protobuf::MessageLite& from);
+  void CopyFrom(const IMContactSessionTopPro& from);
+  void MergeFrom(const IMContactSessionTopPro& from);
+  void Clear();
+  bool IsInitialized() const;
+
+  int ByteSize() const;
+  bool MergePartialFromCodedStream(
+      ::google::protobuf::io::CodedInputStream* input);
+  void SerializeWithCachedSizes(
+      ::google::protobuf::io::CodedOutputStream* output) const;
+  void DiscardUnknownFields();
+  int GetCachedSize() const { return _cached_size_; }
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const;
+  public:
+  ::std::string GetTypeName() const;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  // required uint32 user_id = 1;
+  inline bool has_user_id() const;
+  inline void clear_user_id();
+  static const int kUserIdFieldNumber = 1;
+  inline ::google::protobuf::uint32 user_id() const;
+  inline void set_user_id(::google::protobuf::uint32 value);
+
+  // required uint32 session_id = 2;
+  inline bool has_session_id() const;
+  inline void clear_session_id();
+  static const int kSessionIdFieldNumber = 2;
+  inline ::google::protobuf::uint32 session_id() const;
+  inline void set_session_id(::google::protobuf::uint32 value);
+
+  // required .IM.BaseDefine.SessionType session_type = 3;
+  inline bool has_session_type() const;
+  inline void clear_session_type();
+  static const int kSessionTypeFieldNumber = 3;
+  inline ::IM::BaseDefine::SessionType session_type() const;
+  inline void set_session_type(::IM::BaseDefine::SessionType value);
+
+  // required uint32 update_time = 4;
+  inline bool has_update_time() const;
+  inline void clear_update_time();
+  static const int kUpdateTimeFieldNumber = 4;
+  inline ::google::protobuf::uint32 update_time() const;
+  inline void set_update_time(::google::protobuf::uint32 value);
+
+  // required uint32 is_top = 5;
+  inline bool has_is_top() const;
+  inline void clear_is_top();
+  static const int kIsTopFieldNumber = 5;
+  inline ::google::protobuf::uint32 is_top() const;
+  inline void set_is_top(::google::protobuf::uint32 value);
+
+  // optional bytes attach_data = 20;
+  inline bool has_attach_data() const;
+  inline void clear_attach_data();
+  static const int kAttachDataFieldNumber = 20;
+  inline const ::std::string& attach_data() const;
+  inline void set_attach_data(const ::std::string& value);
+  inline void set_attach_data(const char* value);
+  inline void set_attach_data(const void* value, size_t size);
+  inline ::std::string* mutable_attach_data();
+  inline ::std::string* release_attach_data();
+  inline void set_allocated_attach_data(::std::string* attach_data);
+
+  // @@protoc_insertion_point(class_scope:IM.Buddy.IMContactSessionTopPro)
+ private:
+  inline void set_has_user_id();
+  inline void clear_has_user_id();
+  inline void set_has_session_id();
+  inline void clear_has_session_id();
+  inline void set_has_session_type();
+  inline void clear_has_session_type();
+  inline void set_has_update_time();
+  inline void clear_has_update_time();
+  inline void set_has_is_top();
+  inline void clear_has_is_top();
+  inline void set_has_attach_data();
+  inline void clear_has_attach_data();
+
+  ::std::string _unknown_fields_;
+
+  ::google::protobuf::uint32 _has_bits_[1];
+  mutable int _cached_size_;
+  ::google::protobuf::uint32 user_id_;
+  ::google::protobuf::uint32 session_id_;
+  int session_type_;
+  ::google::protobuf::uint32 update_time_;
+  ::std::string* attach_data_;
+  ::google::protobuf::uint32 is_top_;
+  #ifdef GOOGLE_PROTOBUF_NO_STATIC_INITIALIZER
+  friend void  protobuf_AddDesc_IM_2eBuddy_2eproto_impl();
+  #else
+  friend void  protobuf_AddDesc_IM_2eBuddy_2eproto();
+  #endif
+  friend void protobuf_AssignDesc_IM_2eBuddy_2eproto();
+  friend void protobuf_ShutdownFile_IM_2eBuddy_2eproto();
+
+  void InitAsDefaultInstance();
+  static IMContactSessionTopPro* default_instance_;
 };
 // ===================================================================
 
@@ -5305,6 +5452,207 @@ inline void IMSignInfoChangedNotify::set_allocated_sign_info(::std::string* sign
     sign_info_ = const_cast< ::std::string*>(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   }
   // @@protoc_insertion_point(field_set_allocated:IM.Buddy.IMSignInfoChangedNotify.sign_info)
+}
+
+// -------------------------------------------------------------------
+
+// IMContactSessionTopPro
+
+// required uint32 user_id = 1;
+inline bool IMContactSessionTopPro::has_user_id() const {
+  return (_has_bits_[0] & 0x00000001u) != 0;
+}
+inline void IMContactSessionTopPro::set_has_user_id() {
+  _has_bits_[0] |= 0x00000001u;
+}
+inline void IMContactSessionTopPro::clear_has_user_id() {
+  _has_bits_[0] &= ~0x00000001u;
+}
+inline void IMContactSessionTopPro::clear_user_id() {
+  user_id_ = 0u;
+  clear_has_user_id();
+}
+inline ::google::protobuf::uint32 IMContactSessionTopPro::user_id() const {
+  // @@protoc_insertion_point(field_get:IM.Buddy.IMContactSessionTopPro.user_id)
+  return user_id_;
+}
+inline void IMContactSessionTopPro::set_user_id(::google::protobuf::uint32 value) {
+  set_has_user_id();
+  user_id_ = value;
+  // @@protoc_insertion_point(field_set:IM.Buddy.IMContactSessionTopPro.user_id)
+}
+
+// required uint32 session_id = 2;
+inline bool IMContactSessionTopPro::has_session_id() const {
+  return (_has_bits_[0] & 0x00000002u) != 0;
+}
+inline void IMContactSessionTopPro::set_has_session_id() {
+  _has_bits_[0] |= 0x00000002u;
+}
+inline void IMContactSessionTopPro::clear_has_session_id() {
+  _has_bits_[0] &= ~0x00000002u;
+}
+inline void IMContactSessionTopPro::clear_session_id() {
+  session_id_ = 0u;
+  clear_has_session_id();
+}
+inline ::google::protobuf::uint32 IMContactSessionTopPro::session_id() const {
+  // @@protoc_insertion_point(field_get:IM.Buddy.IMContactSessionTopPro.session_id)
+  return session_id_;
+}
+inline void IMContactSessionTopPro::set_session_id(::google::protobuf::uint32 value) {
+  set_has_session_id();
+  session_id_ = value;
+  // @@protoc_insertion_point(field_set:IM.Buddy.IMContactSessionTopPro.session_id)
+}
+
+// required .IM.BaseDefine.SessionType session_type = 3;
+inline bool IMContactSessionTopPro::has_session_type() const {
+  return (_has_bits_[0] & 0x00000004u) != 0;
+}
+inline void IMContactSessionTopPro::set_has_session_type() {
+  _has_bits_[0] |= 0x00000004u;
+}
+inline void IMContactSessionTopPro::clear_has_session_type() {
+  _has_bits_[0] &= ~0x00000004u;
+}
+inline void IMContactSessionTopPro::clear_session_type() {
+  session_type_ = 1;
+  clear_has_session_type();
+}
+inline ::IM::BaseDefine::SessionType IMContactSessionTopPro::session_type() const {
+  // @@protoc_insertion_point(field_get:IM.Buddy.IMContactSessionTopPro.session_type)
+  return static_cast< ::IM::BaseDefine::SessionType >(session_type_);
+}
+inline void IMContactSessionTopPro::set_session_type(::IM::BaseDefine::SessionType value) {
+  assert(::IM::BaseDefine::SessionType_IsValid(value));
+  set_has_session_type();
+  session_type_ = value;
+  // @@protoc_insertion_point(field_set:IM.Buddy.IMContactSessionTopPro.session_type)
+}
+
+// required uint32 update_time = 4;
+inline bool IMContactSessionTopPro::has_update_time() const {
+  return (_has_bits_[0] & 0x00000008u) != 0;
+}
+inline void IMContactSessionTopPro::set_has_update_time() {
+  _has_bits_[0] |= 0x00000008u;
+}
+inline void IMContactSessionTopPro::clear_has_update_time() {
+  _has_bits_[0] &= ~0x00000008u;
+}
+inline void IMContactSessionTopPro::clear_update_time() {
+  update_time_ = 0u;
+  clear_has_update_time();
+}
+inline ::google::protobuf::uint32 IMContactSessionTopPro::update_time() const {
+  // @@protoc_insertion_point(field_get:IM.Buddy.IMContactSessionTopPro.update_time)
+  return update_time_;
+}
+inline void IMContactSessionTopPro::set_update_time(::google::protobuf::uint32 value) {
+  set_has_update_time();
+  update_time_ = value;
+  // @@protoc_insertion_point(field_set:IM.Buddy.IMContactSessionTopPro.update_time)
+}
+
+// required uint32 is_top = 5;
+inline bool IMContactSessionTopPro::has_is_top() const {
+  return (_has_bits_[0] & 0x00000010u) != 0;
+}
+inline void IMContactSessionTopPro::set_has_is_top() {
+  _has_bits_[0] |= 0x00000010u;
+}
+inline void IMContactSessionTopPro::clear_has_is_top() {
+  _has_bits_[0] &= ~0x00000010u;
+}
+inline void IMContactSessionTopPro::clear_is_top() {
+  is_top_ = 0u;
+  clear_has_is_top();
+}
+inline ::google::protobuf::uint32 IMContactSessionTopPro::is_top() const {
+  // @@protoc_insertion_point(field_get:IM.Buddy.IMContactSessionTopPro.is_top)
+  return is_top_;
+}
+inline void IMContactSessionTopPro::set_is_top(::google::protobuf::uint32 value) {
+  set_has_is_top();
+  is_top_ = value;
+  // @@protoc_insertion_point(field_set:IM.Buddy.IMContactSessionTopPro.is_top)
+}
+
+// optional bytes attach_data = 20;
+inline bool IMContactSessionTopPro::has_attach_data() const {
+  return (_has_bits_[0] & 0x00000020u) != 0;
+}
+inline void IMContactSessionTopPro::set_has_attach_data() {
+  _has_bits_[0] |= 0x00000020u;
+}
+inline void IMContactSessionTopPro::clear_has_attach_data() {
+  _has_bits_[0] &= ~0x00000020u;
+}
+inline void IMContactSessionTopPro::clear_attach_data() {
+  if (attach_data_ != &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
+    attach_data_->clear();
+  }
+  clear_has_attach_data();
+}
+inline const ::std::string& IMContactSessionTopPro::attach_data() const {
+  // @@protoc_insertion_point(field_get:IM.Buddy.IMContactSessionTopPro.attach_data)
+  return *attach_data_;
+}
+inline void IMContactSessionTopPro::set_attach_data(const ::std::string& value) {
+  set_has_attach_data();
+  if (attach_data_ == &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
+    attach_data_ = new ::std::string;
+  }
+  attach_data_->assign(value);
+  // @@protoc_insertion_point(field_set:IM.Buddy.IMContactSessionTopPro.attach_data)
+}
+inline void IMContactSessionTopPro::set_attach_data(const char* value) {
+  set_has_attach_data();
+  if (attach_data_ == &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
+    attach_data_ = new ::std::string;
+  }
+  attach_data_->assign(value);
+  // @@protoc_insertion_point(field_set_char:IM.Buddy.IMContactSessionTopPro.attach_data)
+}
+inline void IMContactSessionTopPro::set_attach_data(const void* value, size_t size) {
+  set_has_attach_data();
+  if (attach_data_ == &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
+    attach_data_ = new ::std::string;
+  }
+  attach_data_->assign(reinterpret_cast<const char*>(value), size);
+  // @@protoc_insertion_point(field_set_pointer:IM.Buddy.IMContactSessionTopPro.attach_data)
+}
+inline ::std::string* IMContactSessionTopPro::mutable_attach_data() {
+  set_has_attach_data();
+  if (attach_data_ == &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
+    attach_data_ = new ::std::string;
+  }
+  // @@protoc_insertion_point(field_mutable:IM.Buddy.IMContactSessionTopPro.attach_data)
+  return attach_data_;
+}
+inline ::std::string* IMContactSessionTopPro::release_attach_data() {
+  clear_has_attach_data();
+  if (attach_data_ == &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
+    return NULL;
+  } else {
+    ::std::string* temp = attach_data_;
+    attach_data_ = const_cast< ::std::string*>(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+    return temp;
+  }
+}
+inline void IMContactSessionTopPro::set_allocated_attach_data(::std::string* attach_data) {
+  if (attach_data_ != &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
+    delete attach_data_;
+  }
+  if (attach_data) {
+    set_has_attach_data();
+    attach_data_ = attach_data;
+  } else {
+    clear_has_attach_data();
+    attach_data_ = const_cast< ::std::string*>(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  }
+  // @@protoc_insertion_point(field_set_allocated:IM.Buddy.IMContactSessionTopPro.attach_data)
 }
 
 

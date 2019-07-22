@@ -224,6 +224,196 @@ bool CacheConn::isExists(string &key)
         return true;
     }
 }
+
+long CacheConn::sAdd(string key, string field)
+{
+	if (Init()) {
+		return 0;
+	}
+
+	redisReply* reply = (redisReply *)redisCommand(m_pContext, "SADD %s %s", key.c_str(), field.c_str());
+	if (!reply) {
+		log("redisCommand failed:%s", m_pContext->errstr);
+		redisFree(m_pContext);
+		m_pContext = NULL;
+		return 0;
+	}
+
+	long ret_value = reply->integer;
+	freeReplyObject(reply);
+	return ret_value;
+}
+
+long CacheConn::sAdd(string key, uint32_t field)
+{
+	if (Init()) {
+		return 0;
+	}
+
+	redisReply* reply = (redisReply *)redisCommand(m_pContext, "SADD %s %d", key.c_str(), field);
+	if (!reply) {
+		log("redisCommand failed:%s", m_pContext->errstr);
+		redisFree(m_pContext);
+		m_pContext = NULL;
+		return 0;
+	}
+
+	long ret_value = reply->integer;
+	freeReplyObject(reply);
+	return ret_value;
+}
+
+
+long CacheConn::sCard(string key)
+{
+	if (Init()) {
+		return 0;
+	}
+
+	redisReply* reply = (redisReply *)redisCommand(m_pContext, "SCARD %s", key.c_str());
+	if (!reply) {
+		log("redisCommand failed:%s", m_pContext->errstr);
+		redisFree(m_pContext);
+		m_pContext = NULL;
+		return 0;
+	}
+
+	long ret_value = reply->integer;
+	freeReplyObject(reply);
+	return ret_value;
+}
+
+long CacheConn::sRemInt(string key, uint32_t field)
+{
+	if (Init()) {
+		return 0;
+	}
+
+	redisReply* reply = (redisReply *)redisCommand(m_pContext, "SREM %s %d", key.c_str(), field);
+	if (!reply) {
+		log("redisCommand failed:%s", m_pContext->errstr);
+		redisFree(m_pContext);
+		m_pContext = NULL;
+		return 0;
+	}
+
+	long ret_value = reply->integer;
+	freeReplyObject(reply);
+	return ret_value;
+}
+
+
+long CacheConn::smembersInt(string key, list<uint32_t>& ret_value)
+{
+	if (Init()) {
+		return 0;
+	}
+
+	redisReply* reply = (redisReply *)redisCommand(m_pContext, "SMEMBERS %s", key.c_str());
+	if (!reply) {
+		log("redisCommand failed:%s", m_pContext->errstr);
+		redisFree(m_pContext);
+		m_pContext = NULL;
+		return 0;
+	}
+
+	if (reply->type == REDIS_REPLY_ARRAY) {
+		for (size_t i = 0; i < reply->elements; i++) {
+			redisReply* value_reply = reply->element[i];
+			string value(value_reply->str, value_reply->len);
+			uint32_t nValue = string2int(value);
+			ret_value.push_back(nValue);
+		}
+	}
+
+	freeReplyObject(reply);
+	return 0;
+}
+
+
+
+long CacheConn::sAddInt(string key, list<uint32_t> lsIds)
+{
+	if (Init()) {
+		return 0;
+	}
+
+	if(lsIds.empty())
+    {
+        return 0;
+    }
+
+	uint32_t ids[20] = {0};
+
+	uint32_t i = 0;
+
+	//20个轮询加
+	for(auto it=lsIds.begin(); it!=lsIds.end(); ++it){
+		ids[i] = *it;
+		if(i == 19){
+			//20个一添加
+			redisReply* reply = (redisReply *)redisCommand(m_pContext, "SADD %s %s %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d", 
+				key.c_str(), ids[0], ids[1],ids[2],ids[3],ids[4],ids[5],ids[6],ids[7],ids[8],ids[9],ids[10],
+				ids[11],ids[12],ids[13],ids[14],ids[15],ids[16],ids[17],ids[18],ids[19]);
+			if (!reply) {
+				log("SADD redisCommand failed:%s", m_pContext->errstr);
+				redisFree(m_pContext);
+				m_pContext = NULL;
+				return 0;
+			}
+
+			freeReplyObject(reply);
+			//重新置零
+			i=0;
+		}else{
+			i++;
+		}
+	}
+
+	uint32_t njs = 0;
+	uint32_t i5 = 0;
+
+	//20个轮询加完之后，5个轮询
+	for(uint32_t j = 0; j <= i; j++)
+	{
+		if(i5 == 4)
+		{
+			redisReply* reply = (redisReply *)redisCommand(m_pContext, "SADD %s %d %d %d %d %d", key.c_str(), ids[njs*5 + i5], ids[njs*5 + i5 + 1],
+				ids[njs*5 + i5 + 2], ids[njs*5 + i5 + 3], ids[njs*5 + i5 + 4]);
+			if (!reply) {
+				log("redisCommand failed:%s", m_pContext->errstr);
+				redisFree(m_pContext);
+				m_pContext = NULL;
+				return 0;
+			}
+
+			freeReplyObject(reply);
+			njs = njs + 1;
+			i5 = 0;
+		}else{
+			i5++;
+		}
+	}
+
+	//最后剩下的，就是i5个，位置是从njs*5开始
+	for(uint32_t j=0; j<=i5; j++)
+	{
+		redisReply* reply = (redisReply *)redisCommand(m_pContext, "SADD %s %d", key.c_str(), ids[njs*5 + j]);
+		if (!reply) {
+			log("redisCommand failed:%s", m_pContext->errstr);
+			redisFree(m_pContext);
+			m_pContext = NULL;
+			return 0;
+		}
+
+		freeReplyObject(reply);
+	}
+
+	return 0;
+}
+
+
+
 long CacheConn::hdel(string key, string field)
 {
 	if (Init()) {

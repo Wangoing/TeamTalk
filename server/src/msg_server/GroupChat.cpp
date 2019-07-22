@@ -195,6 +195,54 @@ void CGroupChat::HandleGroupInfoResponse(CImPdu* pPdu)
     }
 }
 
+
+void CGroupChat::HandleGroupMsgReadResponse(CImPdu* pPdu)
+{
+	IM::Message::IMMsgDataReadNotify msg;
+	CHECK_PB_PARSE_MSG(msg.ParseFromArray(pPdu->GetBodyData(), pPdu->GetBodyLength()));
+
+	uint32_t user_id = msg.user_id();
+	uint32_t group_cnt = msg.group_member_list_size();
+	uint32_t msg_id = msg.msg_id();
+	uint32_t read_count = 0;
+	if(msg.has_msg_read_count()){
+		read_count = msg.msg_read_count();
+	}
+	uint32_t unread_count = 0;
+	if(msg.has_msg_unread_count()){
+		unread_count = msg.msg_unread_count();
+	}
+	
+	log("HandleGroupMsgReadResponse, user_id=%u, group_cnt=%u, msg_id=%d, read_count=%d, unread_count=%d ", user_id, group_cnt, msg_id, read_count, unread_count);
+		
+	IM::Message::IMMsgDataReadNotify msg2;
+	msg2.set_user_id(user_id);
+	msg2.set_session_id(msg.session_id());
+	msg2.set_msg_id(msg_id);
+	msg2.set_session_type(msg.session_type());
+	msg2.set_msg_read_count(read_count);
+	msg2.set_msg_unread_count(unread_count);
+	CImPdu pdu;
+	pdu.SetPBMsg(&msg2);
+	pdu.SetServiceId(SID_MSG);
+	pdu.SetCommandId(CID_MSG_READ_NOTIFY);
+	
+	for (uint32_t i = 0; i < msg.group_member_list_size(); i++)
+	{
+		uint32_t member_user_id = msg.group_member_list(i);
+		
+		CImUser* pToImUser = CImUserManager::GetInstance()->GetImUserById(member_user_id);
+		if (pToImUser)
+		{
+			pToImUser->BroadcastData(pdu.GetBuffer(), pdu.GetLength(), NULL);
+		}
+		CRouteServConn* pRouteConn = get_route_serv_conn();
+	    if (pRouteConn) {
+	        pRouteConn->SendPdu(&pdu);
+	    }
+	}
+}
+
 void CGroupChat::HandleGroupMessage(CImPdu* pPdu)
 {
     IM::Message::IMMsgData msg;
@@ -288,6 +336,65 @@ void CGroupChat::HandleGroupMessageBroadcast(CImPdu *pPdu)
         pDbConn->SendPdu(&pdu);
     }
 }
+
+void CGroupChat::HandleClientGroupChangeRequest(CImPdu* pPdu, CMsgConn* pFromConn)
+{
+    IM::Group::IMGroupChangeReq msg;
+    CHECK_PB_PARSE_MSG(msg.ParseFromArray(pPdu->GetBodyData(), pPdu->GetBodyLength()));
+
+	uint32_t req_user_id = msg.user_id();
+	uint32_t group_id = msg.group_id();
+    string group_name = msg.group_name();
+	string group_avatar = msg.group_avatar();
+	log("HandleClientGroupChangeRequest, req_id=%u, group_name=%s, avatar_url=%s, group_id=%u",
+			req_user_id, group_name.c_str(), group_avatar.c_str(),group_id);
+
+	CDBServConn* pDbConn = get_db_serv_conn();
+	if (pDbConn) {
+		CDbAttachData attach_data(ATTACH_TYPE_HANDLE, pFromConn->GetHandle(), 0);
+        msg.set_attach_data(attach_data.GetBuffer(), attach_data.GetLength());
+        pPdu->SetPBMsg(&msg);
+		pDbConn->SendPdu(pPdu);
+	} else {
+		log("no DB connection ");
+        IM::Group::IMGroupChangeRsp msg2;
+        msg2.set_user_id(req_user_id);
+		msg2.set_group_id(group_id);
+        msg2.set_result_code(1);
+        msg2.set_group_name(group_name);
+        CImPdu pdu;
+        pdu.SetPBMsg(&msg2);
+        pdu.SetServiceId(SID_GROUP);
+        pdu.SetCommandId(CID_GROUP_CHANGE_RESPONSE);
+		pdu.SetSeqNum(pPdu->GetSeqNum());
+		pFromConn->SendPdu(&pdu);
+	}
+}
+
+void CGroupChat::HandleGroupChangeResponse(CImPdu* pPdu)
+{
+    IM::Group::IMGroupChangeRsp msg;
+    CHECK_PB_PARSE_MSG(msg.ParseFromArray(pPdu->GetBodyData(), pPdu->GetBodyLength()));
+
+	uint32_t user_id = msg.user_id();
+    uint32_t result = msg.result_code();
+	uint32_t group_id = msg.group_id();
+	string group_name = msg.group_name();
+	log("HandleGroupChangeResponse, req_id=%u, result=%u, group_id=%u, group_name=%s. ", user_id, result, group_id, group_name.c_str());
+
+    CDbAttachData attach_data((uchar_t*)msg.attach_data().c_str(), msg.attach_data().length());
+    
+    CMsgConn* pFromConn = CImUserManager::GetInstance()->GetMsgConnByHandle(user_id,
+                                                                    attach_data.GetHandle());
+    if (pFromConn)
+    {
+        msg.clear_attach_data();
+        pPdu->SetPBMsg(&msg);
+        pFromConn->SendPdu(pPdu);
+    }
+    //创建的通知暂时取消，因为有消息的时候客户端也会去拉取
+}
+
 
 void CGroupChat::HandleClientGroupCreateRequest(CImPdu* pPdu, CMsgConn* pFromConn)
 {
@@ -411,6 +518,28 @@ void CGroupChat::HandleGroupChangeMemberResponse(CImPdu* pPdu)
         pPdu->SetPBMsg(&msg);
         pFromConn->SendPdu(pPdu);
     }
+
+	//只有当返回值是399时，代表需要下发审批消息
+	if(result == 399){
+		// 服务器没有群的信息，向DB服务器请求群信息，并带上消息作为附件，返回时在发送该消息给其他群成员
+    	//IM::BaseDefine::GroupVersionInfo group_version_info;
+    	CPduAttachData pduAttachData(ATTACH_TYPE_HANDLE_AND_PDU, 0, pPdu->GetBodyLength(), pPdu->GetBodyData());
+		IM::Group::IMGroupInfoListReq msg2;
+	    msg2.set_user_id(user_id);
+	    IM::BaseDefine::GroupVersionInfo* group_version_info = msg2.add_group_version_list();
+	    group_version_info->set_group_id(group_id);
+	    group_version_info->set_version(0);
+	    msg2.set_attach_data(pduAttachData.GetBuffer(), pduAttachData.GetLength());
+	    CImPdu pdu;
+	    pdu.SetPBMsg(&msg2);
+	    pdu.SetServiceId(SID_GROUP);
+	    pdu.SetCommandId(CID_GROUP_INFO_REQUEST);
+	    CDBServConn* pDbConn = get_db_serv_conn();
+	    if(pDbConn)
+	    {
+	        pDbConn->SendPdu(&pdu);
+	    }
+	}
    
 	if (!result) {
         IM::Group::IMGroupChangeMemberNotify msg2;

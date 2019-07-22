@@ -68,12 +68,13 @@ void ClientConn::OnTimer(uint64_t curr_tick)
 
 uint32_t ClientConn::login(const string &strName, const string &strPass)
 {
+	log("ClientConn login====[%s],m_handle=[%d]",strName.c_str(),m_handle);
     CImPdu cPdu;
     IM::Login::IMLoginReq msg;
     msg.set_user_name(strName);
     msg.set_password(strPass);
     msg.set_online_status(IM::BaseDefine::USER_STATUS_ONLINE);
-    msg.set_client_type(IM::BaseDefine::CLIENT_TYPE_WINDOWS);
+    msg.set_client_type(IM::BaseDefine::CLIENT_TYPE_ANDROID);
     msg.set_client_version("1.0");
     cPdu.SetPBMsg(&msg);
     cPdu.SetServiceId(IM::BaseDefine::SID_LOGIN);
@@ -135,6 +136,28 @@ uint32_t ClientConn::sendMessage(uint32_t nFromId, uint32_t nToId, IM::BaseDefin
     return nSeqNo;
 }
 
+uint32_t ClientConn::addCollect(uint32_t nFromId, uint32_t nToId, IM::BaseDefine::MsgType nType, const string& strMsgData)
+{
+    CImPdu cPdu;
+	printf("this is ClientConn addCollect nToId=[%d]\n",nToId);
+    IM::Message::IMMsgData msg;
+    msg.set_from_user_id(nFromId);
+    msg.set_to_session_id(nToId);
+    msg.set_msg_id(0);
+    msg.set_create_time(time(NULL));
+	msg.set_msg_id(4);
+    msg.set_msg_type(nType);
+    msg.set_msg_data("t4Nc31sYLOuNY6fMdzD1EVzIdZRUsFN9eOwYZegap80=");
+    cPdu.SetPBMsg(&msg);
+    cPdu.SetServiceId(IM::BaseDefine::SID_MSG);
+    cPdu.SetCommandId(IM::BaseDefine::CID_COLLECT_DATA);
+    uint32_t nSeqNo = m_pSeqAlloctor->getSeq(ALLOCTOR_PACKET);
+    cPdu.SetSeqNum(nSeqNo);
+    SendPdu(&cPdu);
+    return nSeqNo;
+}
+
+
 uint32_t ClientConn::getUnreadMsgCnt(uint32_t nUserId)
 {
     CImPdu cPdu;
@@ -164,6 +187,25 @@ uint32_t ClientConn::getRecentSession(uint32_t nUserId, uint32_t nLastTime)
     SendPdu(&cPdu);
     return nSeqNo;
 }
+
+uint32_t ClientConn::getCollectList(uint32_t nUserId, IM::BaseDefine::SessionType nType, uint32_t nMsgId, uint32_t nMsgCnt)
+{
+    CImPdu cPdu;
+    IM::Message::IMGetMsgListReq msg;
+    msg.set_user_id(nUserId);
+    msg.set_session_type(nType);
+	msg.set_session_id(0);
+    msg.set_msg_id_begin(nMsgId);
+    msg.set_msg_cnt(nMsgCnt);
+    cPdu.SetPBMsg(&msg);
+    cPdu.SetServiceId(IM::BaseDefine::SID_MSG);
+    cPdu.SetCommandId(IM::BaseDefine::CID_COLLECT_LIST_REQUEST);
+    uint32_t nSeqNo = m_pSeqAlloctor->getSeq(ALLOCTOR_PACKET);
+    cPdu.SetSeqNum(nSeqNo);
+    SendPdu(&cPdu);
+    return nSeqNo;
+}
+
 
 uint32_t ClientConn::getMsgList(uint32_t nUserId, IM::BaseDefine::SessionType nType, uint32_t nPeerId, uint32_t nMsgId, uint32_t nMsgCnt)
 {
@@ -210,23 +252,23 @@ void ClientConn::Close()
 
 void ClientConn::HandlePdu(CImPdu* pPdu)
 {
-    //printf("pdu type = %u\n", pPdu->GetPduType());
+    log("ClientConn pdu type = %d\n", pPdu->GetCommandId());
 	switch (pPdu->GetCommandId()) {
         case IM::BaseDefine::CID_OTHER_HEARTBEAT:
-//		printf("Heartbeat\n");
-		break;
+//			printf("Heartbeat\n");
+			break;
         case IM::BaseDefine::CID_LOGIN_RES_USERLOGIN:
             _HandleLoginResponse(pPdu);
-		break;
+			break;
         case IM::BaseDefine::CID_BUDDY_LIST_ALL_USER_RESPONSE:
             _HandleUser(pPdu);
-        break;
+        	break;
         case IM::BaseDefine::CID_BUDDY_LIST_USER_INFO_RESPONSE:
             _HandleUserInfo(pPdu);
-        break;
+        	break;
         case IM::BaseDefine::CID_MSG_DATA_ACK:
             _HandleSendMsg(pPdu);
-        break;
+        	break;
         case IM::BaseDefine::CID_MSG_UNREAD_CNT_RESPONSE:
             _HandleUnreadCnt(pPdu);
             break;
@@ -236,8 +278,14 @@ void ClientConn::HandlePdu(CImPdu* pPdu)
         case IM::BaseDefine::CID_MSG_LIST_RESPONSE:
             _HandleMsgList(pPdu);
             break;
+		case IM::BaseDefine::CID_COLLECT_LIST_RESPONSE:
+            _HandleCollectList(pPdu);
+            break;
         case IM::BaseDefine::CID_MSG_DATA:
             _HandleMsgData(pPdu);
+            break;
+		case IM::BaseDefine::CID_COLLECT_DATA:
+            _HandleCollectData(pPdu);
             break;
         default:
 		log("wrong msg_type=%d\n", pPdu->GetCommandId());
@@ -248,6 +296,7 @@ void ClientConn::_HandleLoginResponse(CImPdu* pPdu)
 {
     IM::Login::IMLoginRes msgResp;
     uint32_t nSeqNo = pPdu->GetSeqNum();
+	printf("_HandleLoginResponse\n");
     if(msgResp.ParseFromArray(pPdu->GetBodyData(), pPdu->GetBodyLength()))
     {
         uint32_t nRet = msgResp.result_code();
@@ -397,13 +446,38 @@ void ClientConn::_HandleMsgList(CImPdu *pPdu)
         m_pCallback->onError(nSeqNo, pPdu->GetCommandId(), "parse pb falied");
     }
 }
+void ClientConn::_HandleCollectList(CImPdu *pPdu)
+{
+	IM::Message::IMGetMsgListRsp msgResp;
+	uint32_t nSeqNo = pPdu->GetSeqNum();
+	if(msgResp.ParseFromArray(pPdu->GetBodyData(), pPdu->GetBodyLength()))
+	{
+		uint32_t nUserId= msgResp.user_id();
+		IM::BaseDefine::SessionType nSessionType = msgResp.session_type();
+		uint32_t nPeerId = msgResp.session_id();
+		uint32_t nMsgId = msgResp.msg_id_begin();
+		uint32_t nMsgCnt = msgResp.msg_list_size();
+		list<IM::BaseDefine::MsgInfo> lsMsg;
+		for(uint32_t i=0; i<nMsgCnt; ++i)
+		{
+			IM::BaseDefine::MsgInfo msgInfo = msgResp.msg_list(i);
+			lsMsg.push_back(msgInfo);
+		}
+		m_pCallback->onGetMsgList(nSeqNo, nUserId, nPeerId, nSessionType, nMsgId, nMsgCnt, lsMsg);
+	}
+	else
+	{
+		m_pCallback->onError(nSeqNo, pPdu->GetCommandId(), "parse pb falied");
+	}
+}
+
 void ClientConn::_HandleMsgData(CImPdu* pPdu)
 {
     IM::Message::IMMsgData msg;
     uint32_t nSeqNo = pPdu->GetSeqNum();
     if(msg.ParseFromArray(pPdu->GetBodyData(), pPdu->GetBodyLength()))
     {
-        play("message.wav");
+        //play("message.wav");
         
         uint32_t nFromId = msg.from_user_id();
         uint32_t nToId = msg.to_session_id();
@@ -437,3 +511,44 @@ void ClientConn::_HandleMsgData(CImPdu* pPdu)
         m_pCallback->onError(nSeqNo, pPdu->GetCommandId(), "parse pb falied");
     }
 }
+void ClientConn::_HandleCollectData(CImPdu* pPdu)
+{
+    IM::Message::IMMsgData msg;
+    uint32_t nSeqNo = pPdu->GetSeqNum();
+    if(msg.ParseFromArray(pPdu->GetBodyData(), pPdu->GetBodyLength()))
+    {
+        //play("message.wav");
+        
+        uint32_t nFromId = msg.from_user_id();
+        uint32_t nToId = msg.to_session_id();
+        uint32_t nMsgId = msg.msg_id();
+        IM::BaseDefine::MsgType nMsgType = msg.msg_type();
+        uint32_t nCreateTime = msg.create_time();
+        string strMsg(msg.msg_data().c_str(), msg.msg_data().length());
+        
+        IM::BaseDefine::SessionType nSessionType;
+        if(nMsgType == IM::BaseDefine::MSG_TYPE_SINGLE_TEXT)
+        {
+            nSessionType = IM::BaseDefine::SESSION_TYPE_SINGLE;
+        }
+        else if(nMsgType == IM::BaseDefine::MSG_TYPE_SINGLE_AUDIO)
+        {
+            nSessionType = IM::BaseDefine::SESSION_TYPE_SINGLE;
+        }
+        else if(nMsgType == IM::BaseDefine::MSG_TYPE_GROUP_TEXT)
+        {
+            nSessionType = IM::BaseDefine::SESSION_TYPE_GROUP;
+        }
+        else if(nMsgType == IM::BaseDefine::MSG_TYPE_GROUP_AUDIO)
+        {
+            nSessionType = IM::BaseDefine::SESSION_TYPE_GROUP;
+        }
+        sendMsgAck(nFromId, nToId, nSessionType, nMsgId);
+        m_pCallback->onRecvMsg(nSeqNo, nFromId, nToId, nMsgId, nCreateTime, nMsgType, strMsg);
+    }
+    else
+    {
+        m_pCallback->onError(nSeqNo, pPdu->GetCommandId(), "parse pb falied");
+    }
+}
+

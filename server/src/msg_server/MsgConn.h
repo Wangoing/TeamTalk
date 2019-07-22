@@ -81,6 +81,11 @@ private:
     void _SendFriendStatusNotify(uint32_t status);
     void _HandlePushShieldRequest(CImPdu* pPdu);
     void _HandleQueryPushShieldRequest(CImPdu* pPdu);
+
+	void _HandleClientCollectData(CImPdu* pPdu);
+	void _HandleClientCollectRequest(CImPdu *pPdu);
+	void _HandleContactSessionTopRequest(CImPdu* pPdu);
+	void _HandleClientMsgUpdate(CImPdu *pPdu);
 private:
     string          m_login_name;        //登录名拼音
     uint32_t        m_user_id;

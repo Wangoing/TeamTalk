@@ -26,6 +26,7 @@ public:
     bool updateSession(uint32_t nSessionId, uint32_t nUpdateTime);
     bool removeSession(uint32_t nSessionId);
     uint32_t addSession(uint32_t nUserId, uint32_t nPeerId, uint32_t nType);
+	bool updateSessionTop(uint32_t nSessionId, uint32_t nIsTop, uint32_t nUpdateTime);
     
 private:
     CSessionModel() {};

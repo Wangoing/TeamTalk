@@ -39,6 +39,8 @@ public:
     uint32_t getUser(uint32_t nUserId, uint32_t nTime =0);
     uint32_t getUserInfo(uint32_t nUserId, list<uint32_t>& lsUserId);
     uint32_t sendMessage(uint32_t nFromId, uint32_t nToId, IM::BaseDefine::MsgType nType, const string& strMsgData);
+	uint32_t addCollect(uint32_t nFromId, uint32_t nToId, IM::BaseDefine::MsgType nType, const string& strMsgData);
+	uint32_t getCollectList(uint32_t nUserId, IM::BaseDefine::SessionType nType, uint32_t nMsgId, uint32_t nMsgCnt);
     uint32_t getUnreadMsgCnt(uint32_t nUserId);
     uint32_t getRecentSession(uint32_t nUserId, uint32_t nLastTime);
     uint32_t getMsgList(uint32_t nUserId, IM::BaseDefine::SessionType nType, uint32_t nPeerId, uint32_t nMsgId, uint32_t nMsgCnt);
@@ -57,7 +59,9 @@ private:
     void _HandleUnreadCnt(CImPdu* pPdu);
     void _HandleRecentSession(CImPdu* pPdu);
     void _HandleMsgList(CImPdu* pPdu);
+	void _HandleCollectList(CImPdu* pPdu);
     void _HandleMsgData(CImPdu* pPdu);
+	void _HandleCollectData(CImPdu* pPdu);
     
 private:
 	bool 		m_bOpen;
